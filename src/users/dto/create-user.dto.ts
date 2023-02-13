@@ -1,5 +1,6 @@
-import { IsPhoneNumber, IsString } from 'class-validator';
+import { IsPhoneNumber, IsString, Matches } from 'class-validator';
 import { User } from '../entities/user.entity';
+import { Transform } from 'class-transformer';
 export class CreateUserInput {
   @IsString({ message: '이름을 입력해주세요.' })
   name: string;
@@ -11,6 +12,8 @@ export class CreateUserInput {
   email: string;
 
   @IsString({ message: '비밀번호를 확인해주세요.' })
+  @Transform(params => params.value.trim())
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%*?&])[A-Za-z\d@#$!%*?&]{5,20}$/)
   password: string;
 
   @IsString({ message: '비밀번호를 확인해주세요.' })

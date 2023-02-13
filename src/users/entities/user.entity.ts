@@ -1,10 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { IsBoolean, IsEmail, IsPhoneNumber, IsString, Matches } from 'class-validator';
+import { IsBoolean, IsEmail, IsPhoneNumber, IsString, Matches, IsJWT } from 'class-validator';
 import { Transform } from 'class-transformer';
+import * as bcrypt from 'bcrypt';
 
 export type UserDocument = HydratedDocument<User>;
 
+export enum UserRole {
+  Admin = 'Admin',
+  User = 'User',
+}
 @Schema()
 export class User {
   @Prop({ type: String, required: true })
@@ -40,6 +45,20 @@ export class User {
   @Prop({ type: String, required: false, default: '한국' })
   @IsString()
   region: string;
+
+  @Prop({ type: String, enum: UserRole, required: false, default: UserRole.User })
+  @IsString()
+  role: UserRole;
+
+  @Prop({ type: String, required: false })
+  @IsJWT()
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre('save', async function () {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+});
