@@ -6,6 +6,7 @@ import { User, UserDocument } from './entities/user.entity';
 import { LoginInput, LoginOutput } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '../libs/jwt/jwt.service';
+import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private users: Model<UserDocument>, private readonly jwtService: JwtService) {}
@@ -124,6 +125,84 @@ export class UsersService {
       return {
         ok: false,
         error: '로그인에 실패했습니다.',
+      };
+    }
+  }
+
+  async putEditProfile({
+    name,
+    username,
+    email,
+    password,
+    confirmationPassword,
+    region,
+    phoneNum,
+  }: EditProfileInput): Promise<EditProfileOutput> {
+    try {
+      const searchParam: Array<{ email: string }> = [];
+
+      const user = await this.users.findOne({ email });
+
+      if (!user) {
+        return {
+          ok: false,
+          error: '존재하지 않는 이메일입니다.',
+        };
+      }
+
+      if (password) {
+        if (password !== confirmationPassword) {
+          return {
+            ok: false,
+            error: '비밀번호가 일치하지 않습니다.',
+          };
+        }
+        user.password = password;
+      }
+
+      if (name) {
+        user.name = name;
+      }
+
+      if (username) {
+        user.username = username;
+      }
+
+      if (region) {
+        user.region = region;
+      }
+
+      if (phoneNum) {
+        user.phoneNum = phoneNum;
+      }
+
+      if (email) {
+        if (user.email !== email) {
+          searchParam.push({ email });
+        }
+
+        if (searchParam.length > 0) {
+          const foundUser = await this.users.findOne({ $or: searchParam });
+
+          if (foundUser && foundUser.email === user.email) {
+            return {
+              ok: false,
+              error: '이미 존재하는 이메일입니다.',
+            };
+          }
+        }
+        user.email = email;
+      }
+
+      await user.save();
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: '프로필 수정에 실패했습니다.',
       };
     }
   }
