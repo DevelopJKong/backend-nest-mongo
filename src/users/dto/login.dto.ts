@@ -17,4 +17,7 @@ export class LoginInput {
 export class LoginOutput extends CoreOutput {
   @IsJWT({ message: '토큰이 올바르지 않습니다.' })
   token?: string;
+
+  @IsJWT({ message: '리프레시 토큰이 올바르지 않습니다.' })
+  refreshToken?: string;
 }

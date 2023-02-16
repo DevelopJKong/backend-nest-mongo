@@ -11,7 +11,7 @@ import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 export class UsersService {
   constructor(@InjectModel(User.name) private users: Model<UserDocument>, private readonly jwtService: JwtService) {}
 
-  async getFindById(userId: number) {
+  async getFindById(userId: string) {
     try {
       const user = await this.users.findById(userId);
       return {
@@ -112,13 +112,14 @@ export class UsersService {
 
       const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
-      user.refreshToken = hashedRefreshToken;
+      user.refreshToken = refreshToken;
 
       await user.save();
 
       return {
         ok: true,
         token,
+        refreshToken: hashedRefreshToken,
       };
     } catch (error) {
       console.log(error);

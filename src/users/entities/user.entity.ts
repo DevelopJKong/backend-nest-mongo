@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, SchemaTypes } from 'mongoose';
 import { IsBoolean, IsEmail, IsPhoneNumber, IsString, Matches, IsJWT } from 'class-validator';
 import { Transform } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
@@ -12,6 +12,10 @@ export enum UserRole {
 }
 @Schema()
 export class User {
+  @Prop({ type: SchemaTypes.ObjectId })
+  @IsString()
+  _id: string;
+
   @Prop({ type: String, required: true })
   @IsEmail()
   name: string;

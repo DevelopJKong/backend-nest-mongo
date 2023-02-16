@@ -3,7 +3,7 @@ import { LoggerService } from '../logger/logger.service';
 import { ForbiddenException } from '@nestjs/common/exceptions';
 
 @Catch(ForbiddenException)
-export class CustomForbiddenException extends HttpException {
+export class AuthForbiddenException extends HttpException {
   constructor(private readonly log: LoggerService) {
     super('Forbidden', HttpStatus.FORBIDDEN);
   }
