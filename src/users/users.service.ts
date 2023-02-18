@@ -7,6 +7,10 @@ import { LoginInput, LoginOutput } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '../libs/jwt/jwt.service';
 import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
+import { EmailCheckInput, EmailCheckOutput } from './dto/email-check.dto';
+import { CertificatePhoneInput, CertificatePhoneOutput } from './dto/certificate-phone.dto';
+import axios from 'axios';
+import { IAMPORT_TOKEN_URL } from '../common/constants/common.constants';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private users: Model<UserDocument>, private readonly jwtService: JwtService) {}
@@ -204,6 +208,62 @@ export class UsersService {
       return {
         ok: false,
         error: '프로필 수정에 실패했습니다.',
+      };
+    }
+  }
+  async postEmailCheck({ email }: EmailCheckInput): Promise<EmailCheckOutput> {
+    try {
+      const user = await this.users.findOne({ email });
+      if (user) {
+        return {
+          ok: false,
+          error: '이미 존재하는 이메일입니다.',
+        };
+      }
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: '이메일 중복체크에 실패했습니다.',
+      };
+    }
+  }
+
+  async postCertificatePhone({ imp_uid }: CertificatePhoneInput): Promise<CertificatePhoneOutput> {
+    try {
+      const { data: getToken } = await axios.post(IAMPORT_TOKEN_URL, {
+        imp_key: process.env.SHOP_API_KEY,
+        imp_secret: process.env.SHOP_API_SECRET,
+      });
+
+      const { access_token } = getToken.response;
+
+      const { data: getCertifications } = await axios.post(`https://api.iamport.kr/certifications/${imp_uid}`, {
+        headers: { Authorization: access_token },
+      });
+
+      const certificationsInfo = getCertifications.response;
+
+      const { phone: phoneNum } = certificationsInfo; // ! name, birth 사용할수있음
+      const isUser = await this.users.exists({ phoneNum });
+
+      if (isUser) {
+        return {
+          ok: false,
+          error: '이미 존재하는 전화번호입니다.',
+        };
+      }
+
+      return {
+        ok: true,
+        status: 'success',
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: '인증에 실패했습니다.',
       };
     }
   }

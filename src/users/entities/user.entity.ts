@@ -42,7 +42,7 @@ export class User {
   @IsBoolean()
   socialOnly: boolean;
 
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: false, unique: true })
   @IsPhoneNumber('KR')
   phoneNum: string;
 
