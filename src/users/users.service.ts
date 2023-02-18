@@ -240,7 +240,7 @@ export class UsersService {
 
       const { access_token } = getToken.response;
 
-      const { data: getCertifications } = await axios.post(`https://api.iamport.kr/certifications/${imp_uid}`, {
+      const { data: getCertifications } = await axios.get(`https://api.iamport.kr/certifications/${imp_uid}`, {
         headers: { Authorization: access_token },
       });
 
