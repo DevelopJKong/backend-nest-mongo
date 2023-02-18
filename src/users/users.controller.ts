@@ -7,6 +7,7 @@ import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 import { AuthUser } from 'src/libs/auth/auth-user.decorator';
 import { User } from './entities/user.entity';
 import { EmailCheckInput, EmailCheckOutput } from './dto/email-check.dto';
+import { CertificatePhoneInput, CertificatePhoneOutput } from './dto/certificate-phone.dto';
 
 @Controller('users')
 export class UsersController {
@@ -40,5 +41,11 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async emailCheck(@Body() emailCheckInput: EmailCheckInput): Promise<EmailCheckOutput> {
     return this.usersService.postEmailCheck(emailCheckInput);
+  }
+
+  @Post('/certifications')
+  @HttpCode(HttpStatus.OK)
+  async certificatePhone(@Body() certificatePhoneInput: CertificatePhoneInput): Promise<CertificatePhoneOutput> {
+    return this.usersService.postCertificatePhone(certificatePhoneInput);
   }
 }
