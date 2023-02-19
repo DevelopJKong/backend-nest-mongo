@@ -9,6 +9,7 @@ import { MiddlewareConsumer } from '@nestjs/common/interfaces/middleware/middlew
 import { JwtMiddleware } from './libs/jwt/jwt.middleware';
 import { JwtModule } from './libs/jwt/jwt.module';
 import { LoggerModule } from './libs/logger/logger.module';
+import { BoardsModule } from './boards/boards.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,6 +35,7 @@ import { LoggerModule } from './libs/logger/logger.module';
       nodeEnv: process.env.NODE_ENV,
     }),
     UsersModule,
+    BoardsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
