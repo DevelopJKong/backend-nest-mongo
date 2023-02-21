@@ -1,4 +1,16 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { HttpCode } from '@nestjs/common/decorators/http/http-code.decorator';
 import { GetSeeBoardsOutput } from './dto/see-boards.dto';
@@ -8,6 +20,7 @@ import { AuthUser } from 'src/libs/auth/auth-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { boardOptions } from '../common/utils/multer.options';
+import { EditBoardInput, EditBoardOutput } from './dto/edit-board.dto';
 
 @Controller('boards')
 export class BoardsController {
@@ -33,5 +46,23 @@ export class BoardsController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<CreateBoardOutput> {
     return this.boardsService.postWriteBoard(writeBoardInput, authUser.userId, file);
+  }
+
+  @Put('/edit')
+  @UseInterceptors(FileInterceptor('image', boardOptions))
+  @HttpCode(HttpStatus.OK)
+  async editBoard(
+    @AuthUser() authUser: User,
+    @Body() editBoardInput: EditBoardInput,
+    @Query() { id }: { id: string },
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<EditBoardOutput> {
+    return this.boardsService.putEditBoard(editBoardInput, authUser.userId, id, file);
+  }
+
+  @Delete('/delete')
+  @HttpCode(HttpStatus.OK)
+  async deleteBoard(@AuthUser() authUser: User, @Query() { id }: { id: string }) {
+    return this.boardsService.deleteBoard(authUser.userId, Number(id));
   }
 }

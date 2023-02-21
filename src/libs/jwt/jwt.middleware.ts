@@ -13,7 +13,6 @@ export class JwtMiddleware implements NestMiddleware {
     private readonly userService: UsersService,
     private readonly log: LoggerService,
   ) {}
-
   /**
    *  * jwt middleware 미들웨어
    *  * 목표 access_token 과 refresh_token 구현하기
