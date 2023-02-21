@@ -46,5 +46,9 @@ export class AppModule implements NestModule {
       path: '/users/*',
       method: RequestMethod.ALL,
     });
+    consumer.apply(JwtMiddleware).forRoutes({
+      path: '/boards/*',
+      method: RequestMethod.ALL,
+    });
   }
 }

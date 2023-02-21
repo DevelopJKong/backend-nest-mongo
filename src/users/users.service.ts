@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
 import { CreateUserOutput } from './dto/create-user.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,6 +11,8 @@ import { EmailCheckInput, EmailCheckOutput } from './dto/email-check.dto';
 import { CertificatePhoneInput, CertificatePhoneOutput } from './dto/certificate-phone.dto';
 import axios from 'axios';
 import { IAMPORT_TOKEN_URL } from '../common/constants/common.constants';
+import { userSuccess } from '../common/constants/success.constants';
+import { commonError, userError } from '../common/constants/error.constants';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private users: Model<UserDocument>, private readonly jwtService: JwtService) {}
@@ -18,14 +20,17 @@ export class UsersService {
   async getFindById(userId: string) {
     try {
       const user = await this.users.findById(userId);
+      //* success
       return {
         ok: true,
+        message: { text: userSuccess.getFindById.text, statusCode: HttpStatus.OK },
         user,
       };
     } catch (error) {
       return {
         ok: false,
-        error: '유저를 찾을 수 없습니다.',
+        error: new Error(error),
+        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -35,12 +40,17 @@ export class UsersService {
       const user = await this.users.findOne({ email });
       return {
         ok: true,
+        message: {
+          text: userSuccess.getFindByEmail.text,
+          statusCode: HttpStatus.OK,
+        },
         user,
       };
     } catch (error) {
       return {
         ok: false,
-        error: '유저를 찾을 수 없습니다.',
+        error: new Error(error),
+        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -58,7 +68,11 @@ export class UsersService {
       if (password !== confirmationPassword) {
         return {
           ok: false,
-          error: '비밀번호가 일치하지 않습니다.',
+          error: new Error(userError.notMatchedPasswords.error),
+          message: {
+            text: userError.notMatchedPasswords.text,
+            statusCode: HttpStatus.UNAUTHORIZED,
+          },
         };
       }
       const isValidationCheck = await this.users.exists({ $or: [{ email }, { username }] });
@@ -70,7 +84,7 @@ export class UsersService {
         };
       }
 
-      const user = await this.users.create({
+      await this.users.create({
         name,
         username,
         email,
@@ -81,12 +95,16 @@ export class UsersService {
 
       return {
         ok: true,
-        user,
+        message: {
+          text: userSuccess.postJoin.text,
+          statusCode: HttpStatus.OK,
+        },
       };
     } catch (error) {
       return {
         ok: false,
-        error: '회원가입에 실패했습니다.',
+        error: new Error(error),
+        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -98,7 +116,11 @@ export class UsersService {
       if (!user) {
         return {
           ok: false,
-          error: '존재하지 않는 이메일입니다.',
+          error: new Error(userError.notExistUser.error),
+          message: {
+            text: userError.notExistUser.text,
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
         };
       }
 
@@ -107,7 +129,11 @@ export class UsersService {
       if (!isValidationCheck) {
         return {
           ok: false,
-          error: '비밀번호가 일치하지 않습니다.',
+          error: new Error(userError.notExistUser.error),
+          message: {
+            text: userError.notExistUser.text,
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
         };
       }
       const token = this.jwtService.sign({ id: user._id });
@@ -124,12 +150,16 @@ export class UsersService {
         ok: true,
         token,
         refreshToken: hashedRefreshToken,
+        message: {
+          text: userSuccess.postLogin.text,
+          statusCode: HttpStatus.OK,
+        },
       };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
-        error: '로그인에 실패했습니다.',
+        error: new Error(error),
+        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -151,7 +181,11 @@ export class UsersService {
       if (!user) {
         return {
           ok: false,
-          error: '존재하지 않는 이메일입니다.',
+          error: new Error(userError.notExistUser.error),
+          message: {
+            text: userError.notExistUser.text,
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
         };
       }
 
@@ -159,7 +193,11 @@ export class UsersService {
         if (password !== confirmationPassword) {
           return {
             ok: false,
-            error: '비밀번호가 일치하지 않습니다.',
+            error: new Error(userError.notMatchedPasswords.error),
+            message: {
+              text: userError.notMatchedPasswords.text,
+              statusCode: HttpStatus.UNAUTHORIZED,
+            },
           };
         }
         user.password = password;
@@ -190,9 +228,14 @@ export class UsersService {
           const foundUser = await this.users.findOne({ $or: searchParam });
 
           if (foundUser && foundUser.email === user.email) {
+            // ! 유저가 이미 존재하는 유저를 입력 했을 경우 에러
             return {
               ok: false,
-              error: '이미 존재하는 이메일입니다.',
+              error: new Error(userError.existUser.error),
+              message: {
+                text: userError.existUser.text,
+                statusCode: HttpStatus.BAD_REQUEST,
+              },
             };
           }
         }
@@ -203,11 +246,16 @@ export class UsersService {
 
       return {
         ok: true,
+        message: {
+          text: userSuccess.putEditProfile.text,
+          statusCode: HttpStatus.OK,
+        },
       };
     } catch (error) {
       return {
         ok: false,
-        error: '프로필 수정에 실패했습니다.',
+        error: new Error(error),
+        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -215,24 +263,39 @@ export class UsersService {
     try {
       const user = await this.users.findOne({ email });
       if (user) {
+        // ! 이미 존재하는 유저 일 경우
         return {
           ok: false,
-          error: '이미 존재하는 이메일입니다.',
+          error: new Error(userError.existUser.error),
+          message: {
+            text: userError.existUser.text,
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
         };
       }
       return {
         ok: true,
+        message: {
+          text: userSuccess.postEmailCheck.text,
+          statusCode: HttpStatus.OK,
+        },
       };
     } catch (error) {
       return {
         ok: false,
-        error: '이메일 중복체크에 실패했습니다.',
+        error: new Error(error),
+        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
 
   async postCertificatePhone({ imp_uid }: CertificatePhoneInput): Promise<CertificatePhoneOutput> {
     try {
+      const STATUS = {
+        SUCCESS: 'success',
+        FAIL: 'fail',
+      } as const;
+
       const { data: getToken } = await axios.post(IAMPORT_TOKEN_URL, {
         imp_key: process.env.SHOP_API_KEY,
         imp_secret: process.env.SHOP_API_SECRET,
@@ -252,18 +315,29 @@ export class UsersService {
       if (isUser) {
         return {
           ok: false,
-          error: '이미 존재하는 전화번호입니다.',
+          status: STATUS.FAIL,
+          error: new Error(userError.existUser.error),
+          message: {
+            text: userError.existUser.text,
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
         };
       }
 
       return {
         ok: true,
-        status: 'success',
+        status: STATUS.SUCCESS,
+        message: {
+          text: userSuccess.postCertification.text,
+          statusCode: HttpStatus.OK,
+        },
       };
     } catch (error) {
+      // ! extraError
       return {
         ok: false,
-        error: '인증에 실패했습니다.',
+        error: new Error(error),
+        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }

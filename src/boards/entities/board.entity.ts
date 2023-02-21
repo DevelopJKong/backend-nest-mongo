@@ -1,17 +1,17 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsString, IsNumber, IsOptional } from 'class-validator';
-import mongoose, { SchemaTypes, HydratedDocument } from 'mongoose';
-import { Transform, Type } from 'class-transformer';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Type } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
 
 export type BoardDocument = HydratedDocument<Board>;
 
 @Schema()
 export class Board {
-  @Prop({ type: SchemaTypes.ObjectId })
-  @Transform(({ value }) => value.toString())
+  _id: mongoose.Types.ObjectId;
+
   @IsString()
-  _id: string;
+  boardId: string;
 
   @Prop({ type: String, required: true })
   @IsString()
@@ -41,11 +41,16 @@ export class Board {
   @Prop({ type: Number })
   @IsNumber()
   @IsOptional()
-  rating: number;
+  rating?: number;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   @Type(() => User)
-  author: User;
+  owner: User;
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);
+
+BoardSchema.virtual('boardId').get(function () {
+  const boardId = this._id.toString();
+  return boardId;
+});

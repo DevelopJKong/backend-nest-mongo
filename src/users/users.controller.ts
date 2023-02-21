@@ -16,7 +16,7 @@ export class UsersController {
   @Get('/owner')
   @HttpCode(HttpStatus.OK)
   async getFindById(@AuthUser() authUser: User) {
-    return this.usersService.getFindById(authUser._id);
+    return this.usersService.getFindById(authUser.userId);
   }
 
   @Post('/join')

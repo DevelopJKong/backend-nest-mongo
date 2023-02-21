@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, SchemaTypes } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { IsBoolean, IsEmail, IsPhoneNumber, IsString, Matches, IsJWT } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import mongoose from 'mongoose'; // eslint-disable-line
 import * as bcrypt from 'bcrypt';
+import { Board } from '../../boards/entities/board.entity';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -10,12 +12,13 @@ export enum UserRole {
   Admin = 'Admin',
   User = 'User',
 }
+
 @Schema()
 export class User {
-  @Prop({ type: SchemaTypes.ObjectId })
-  @Transform(({ value }) => value.toString())
+  _id: mongoose.Types.ObjectId;
+
   @IsString()
-  _id: string;
+  userId: string;
 
   @Prop({ type: String, required: true })
   @IsString()
@@ -58,9 +61,18 @@ export class User {
   @Prop({ type: String, required: false })
   @IsJWT()
   refreshToken: string;
+
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Board' }])
+  @Type(() => Board)
+  boards: Board[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.virtual('userId').get(function () {
+  const userId = this._id.toString();
+  return userId;
+});
 
 UserSchema.pre('save', async function () {
   if (this.isModified('password')) {
