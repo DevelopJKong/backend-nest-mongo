@@ -110,7 +110,7 @@ export class UsersService {
           error: '비밀번호가 일치하지 않습니다.',
         };
       }
-      const token = this.jwtService.sign({ id: user._id.toString() });
+      const token = this.jwtService.sign({ id: user._id });
 
       const refreshToken = this.jwtService.refreshSign({});
 

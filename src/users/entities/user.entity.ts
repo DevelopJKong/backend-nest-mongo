@@ -13,11 +13,12 @@ export enum UserRole {
 @Schema()
 export class User {
   @Prop({ type: SchemaTypes.ObjectId })
+  @Transform(({ value }) => value.toString())
   @IsString()
   _id: string;
 
   @Prop({ type: String, required: true })
-  @IsEmail()
+  @IsString()
   name: string;
 
   @Prop({ type: String, required: true, unique: true })
