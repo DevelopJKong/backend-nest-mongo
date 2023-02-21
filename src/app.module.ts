@@ -19,7 +19,7 @@ import { BoardsModule } from './boards/boards.module';
         DB_HOST: Joi.string().required(),
       }),
     }),
-    MongooseModule.forRoot(process.env.DB_HOST, {
+    MongooseModule.forRoot(process.env.DB_PROD_HOST, {
       connectionFactory: connection => {
         connection.plugin(require('mongoose-autopopulate')); // eslint-disable-line
         console.log('Mongoose connection created');
