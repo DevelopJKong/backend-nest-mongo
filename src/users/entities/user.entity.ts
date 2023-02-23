@@ -13,7 +13,7 @@ export enum UserRole {
   User = 'User',
 }
 
-@Schema()
+@Schema({ collection: 'user' })
 export class User {
   _id: mongoose.Types.ObjectId;
 

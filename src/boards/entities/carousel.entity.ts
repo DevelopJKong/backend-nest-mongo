@@ -4,7 +4,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 
 export type CarouselDocument = HydratedDocument<Carousel>;
 
-@Schema()
+@Schema({ collection: 'carousel' })
 export class Carousel {
   _id: mongoose.Types.ObjectId;
 

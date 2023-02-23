@@ -7,7 +7,7 @@ import { BoardComment } from './board-comment.entity';
 
 export type BoardDocument = HydratedDocument<Board>;
 
-@Schema()
+@Schema({ collection: 'board' })
 export class Board {
   _id: mongoose.Types.ObjectId;
 

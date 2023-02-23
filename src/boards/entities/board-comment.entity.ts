@@ -7,7 +7,7 @@ import { Type } from 'class-transformer';
 
 export type BoardCommentDocument = HydratedDocument<BoardComment>;
 
-@Schema()
+@Schema({ collection: 'board_comment' })
 export class BoardComment {
   _id: mongoose.Types.ObjectId;
 

@@ -7,7 +7,7 @@ import { CommunityComment } from './community-comment.entity';
 
 export type CommunityDocument = HydratedDocument<Community>;
 
-@Schema()
+@Schema({ collection: 'community' })
 export class Community {
   _id: mongoose.Types.ObjectId;
 

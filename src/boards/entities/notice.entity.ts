@@ -4,7 +4,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 
 export type NoticeDocument = HydratedDocument<Notice>;
 
-@Schema()
+@Schema({ collection: 'notice' })
 export class Notice {
   _id: mongoose.Types.ObjectId;
 
