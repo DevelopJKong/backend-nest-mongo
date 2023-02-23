@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpStatus, Put, Get } from '@nestjs/common';
+import { Controller, Post, Body, HttpStatus, Put, Get, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserInput, CreateUserOutput } from './dto/create-user.dto';
 import { LoginOutput, LoginInput } from './dto/login.dto';
@@ -8,6 +8,8 @@ import { AuthUser } from 'src/libs/auth/auth-user.decorator';
 import { User } from './entities/user.entity';
 import { EmailCheckInput, EmailCheckOutput } from './dto/email-check.dto';
 import { CertificatePhoneInput, CertificatePhoneOutput } from './dto/certificate-phone.dto';
+import { CertificateEmailInput } from './dto/certificate-email.dto';
+import { Response } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -41,6 +43,15 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async emailCheck(@Body() emailCheckInput: EmailCheckInput): Promise<EmailCheckOutput> {
     return this.usersService.postEmailCheck(emailCheckInput);
+  }
+
+  @Post('/email-certifications')
+  @HttpCode(HttpStatus.OK)
+  async certificateEmail(
+    @Body() certificateEmailInput: CertificateEmailInput,
+    @Res() response: Response,
+  ): Promise<void> {
+    return this.usersService.postCertificateEmail(certificateEmailInput, response);
   }
 
   @Post('/certifications')

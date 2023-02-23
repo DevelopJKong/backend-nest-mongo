@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { User } from './user.entity';
 import { Type } from 'class-transformer';
@@ -14,9 +14,10 @@ export class Verification {
   @IsString()
   verificationId: string;
 
-  @Prop({ required: true, type: String })
+  @Prop({ type: String, default: '' })
+  @IsOptional()
   @IsString()
-  code: string;
+  code?: string;
 
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   @Type(() => User)

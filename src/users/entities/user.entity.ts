@@ -6,6 +6,7 @@ import mongoose from 'mongoose'; // eslint-disable-line
 import * as bcrypt from 'bcrypt';
 import { Board } from '../../boards/entities/board.entity';
 import { Community } from 'src/communities/entities/community.entity';
+import { Verification } from './verification.entity';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -66,6 +67,10 @@ export class User {
   @Prop({ type: Boolean, required: false })
   @IsBoolean()
   isVerified: boolean;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Verification' })
+  @Type(() => Verification)
+  verification: Verification;
 
   @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Board' }])
   @Type(() => Board)

@@ -91,7 +91,7 @@ export class JwtMiddleware implements NestMiddleware {
         // * JWT MIDDLEWARE | 호출 성공
         this.log.logger().info(this.log.loggerInfo(`JWT MIDDLEWARE | 호출 성공`));
         req['user'] = user;
-      } catch (error) {
+      } catch {
         // ! [ERROR] token 만료
         this.log.logger().error(this.log.loggerInfo(`ForbiddenException | 권한이 없습니다.`));
         throw new ForbiddenException();

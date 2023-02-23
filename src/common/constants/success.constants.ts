@@ -20,6 +20,9 @@ export const userSuccess = {
   postEmailCheck: {
     text: '이메일 중복 체크 성공',
   },
+  postEmailVerification: {
+    text: '이메일 인증 성공',
+  },
 } as const;
 
 export const boardSuccess = {

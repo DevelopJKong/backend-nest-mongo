@@ -15,6 +15,14 @@ export const userError = {
     error: 'wrongPassword',
     text: '비밀번호가 잘못 되었습니다.',
   },
+  notExistVerification: {
+    error: 'notExistVerification',
+    text: '존재하지 않는 인증코드 입니다.',
+  },
+  notVerifiedUser: {
+    error: 'notVerifiedUser',
+    text: '인증되지 않은 유저 입니다.',
+  },
 } as const;
 
 export const boardError = {

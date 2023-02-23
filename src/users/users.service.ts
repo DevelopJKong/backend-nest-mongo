@@ -1,7 +1,7 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { CreateUserOutput } from './dto/create-user.dto';
 import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { User, UserDocument } from './entities/user.entity';
 import { LoginInput, LoginOutput } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
@@ -13,9 +13,20 @@ import axios from 'axios';
 import { IAMPORT_TOKEN_URL } from '../common/constants/common.constants';
 import { userSuccess } from '../common/constants/success.constants';
 import { commonError, userError } from '../common/constants/error.constants';
+import { Verification, VerificationDocument } from './entities/verification.entity';
+import { MailService } from 'src/mail/mail.service';
+import { CertificateEmailInput } from './dto/certificate-email.dto';
+import * as mongoose from 'mongoose';
+import { Response } from 'express';
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private users: Model<UserDocument>, private readonly jwtService: JwtService) {}
+  constructor(
+    @InjectModel(User.name) private readonly users: Model<UserDocument>,
+    @InjectModel(Verification.name) private readonly verifications: Model<VerificationDocument>,
+    @InjectConnection() private readonly connection: mongoose.Connection,
+    private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
+  ) {}
 
   async getFindById(userId: string) {
     try {
@@ -64,6 +75,8 @@ export class UsersService {
     region,
     phoneNum,
   }): Promise<CreateUserOutput> {
+    const session = await this.connection.startSession();
+    session.startTransaction();
     try {
       if (password !== confirmationPassword) {
         return {
@@ -84,7 +97,7 @@ export class UsersService {
         };
       }
 
-      await this.users.create({
+      const createUserValue = new this.users({
         name,
         username,
         email,
@@ -92,6 +105,18 @@ export class UsersService {
         region,
         phoneNum,
       });
+
+      const user = await createUserValue.save({ session });
+
+      const createVerificationValue = new this.verifications({
+        user,
+      });
+
+      const verification = await createVerificationValue.save({ session });
+
+      await this.mailService.sendMail(this.mailService.mailVar(user.email, user.username, verification.code));
+
+      await session.commitTransaction();
 
       return {
         ok: true,
@@ -101,11 +126,14 @@ export class UsersService {
         },
       };
     } catch (error) {
+      await session.abortTransaction();
       return {
         ok: false,
         error: new Error(error),
         message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
+    } finally {
+      await session.endSession();
     }
   }
 
@@ -136,6 +164,17 @@ export class UsersService {
           },
         };
       }
+
+      if (!user.isVerified) {
+        return {
+          ok: false,
+          error: new Error(userError.notVerifiedUser.error),
+          message: {
+            text: userError.notVerifiedUser.text,
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
+        };
+      }
       const token = this.jwtService.sign({ id: user._id });
 
       const refreshToken = this.jwtService.refreshSign({});
@@ -161,6 +200,26 @@ export class UsersService {
         error: new Error(error),
         message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
+    }
+  }
+  async postCertificateEmail({ code, email }: CertificateEmailInput, response: Response): Promise<void> {
+    try {
+      const user = await this.users.findOne({ email });
+
+      if (!user) {
+        return response.redirect('http://localhost:3000/login');
+      }
+      const verification = await this.verifications.findOne({ code });
+
+      if (!verification) {
+        return response.redirect('http://localhost:3000/login');
+      }
+
+      user.isVerified = true;
+      user.save();
+      return response.redirect('http://localhost:3000/login');
+    } catch (error) {
+      return response.redirect('http://localhost:3000/login');
     }
   }
 

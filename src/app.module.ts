@@ -11,6 +11,7 @@ import { JwtModule } from './libs/jwt/jwt.module';
 import { LoggerModule } from './libs/logger/logger.module';
 import { BoardsModule } from './boards/boards.module';
 import { CommunitiesModule } from './communities/communities.module';
+import { MailModule } from './mail/mail.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +27,7 @@ import { CommunitiesModule } from './communities/communities.module';
         SHOP_PID_CODE: Joi.string().required(),
         SHOP_API_KEY: Joi.string().required(),
         SHOP_API_SECRET: Joi.string().required(),
+        BACKEND_URL: Joi.string().required(),
       }),
     }),
     MongooseModule.forRoot(process.env.DB_HOST, {
@@ -42,6 +44,16 @@ import { CommunitiesModule } from './communities/communities.module';
     }),
     LoggerModule.forRoot({
       nodeEnv: process.env.NODE_ENV,
+    }),
+    MailModule.forRoot({
+      service: process.env.MAIL_SERVICE,
+      host: process.env.MAIL_HOST,
+      port: process.env.MAIL_PORT,
+      secure: Boolean(process.env.MAIL_SECURE),
+      auth: {
+        user: process.env.MAIL_GOOGLE_MAIL,
+        pass: process.env.MAIL_GOOGLE_PASSWORD,
+      },
     }),
     UsersModule,
     BoardsModule,
