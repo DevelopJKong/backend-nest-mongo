@@ -5,6 +5,7 @@ import { Transform, Type } from 'class-transformer';
 import mongoose from 'mongoose'; // eslint-disable-line
 import * as bcrypt from 'bcrypt';
 import { Board } from '../../boards/entities/board.entity';
+import { Community } from 'src/communities/entities/community.entity';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -62,9 +63,17 @@ export class User {
   @IsJWT()
   refreshToken: string;
 
+  @Prop({ type: Boolean, required: false })
+  @IsBoolean()
+  isVerified: boolean;
+
   @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Board' }])
   @Type(() => Board)
   boards: Board[];
+
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Community' }])
+  @Type(() => Community)
+  communities: Community[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
