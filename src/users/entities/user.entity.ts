@@ -64,7 +64,7 @@ export class User {
   @IsJWT()
   refreshToken: string;
 
-  @Prop({ type: Boolean, required: false })
+  @Prop({ type: Boolean, required: false, default: false })
   @IsBoolean()
   isVerified: boolean;
 
