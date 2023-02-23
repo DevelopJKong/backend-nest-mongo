@@ -1,18 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsDate } from 'class-validator';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { Type } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
-import { BoardComment } from './board-comment.entity';
+import { Type } from 'class-transformer';
+import { CommunityComment } from './community-comment.entity';
 
-export type BoardDocument = HydratedDocument<Board>;
+export type CommunityDocument = HydratedDocument<Community>;
 
 @Schema()
-export class Board {
+export class Community {
   _id: mongoose.Types.ObjectId;
 
   @IsString()
-  boardId: string;
+  communityId: string;
 
   @Prop({ type: String, required: true })
   @IsString()
@@ -20,15 +20,15 @@ export class Board {
 
   @Prop({ type: String, required: true })
   @IsString()
-  boardImgName: string;
+  communityImgName: string;
 
   @Prop({ type: Number, required: true })
   @IsNumber()
-  boardImgSize: number;
+  communityImgSize: number;
 
   @Prop({ type: String, required: true })
   @IsString()
-  boardImgPath: string;
+  communityImgPath: string;
 
   @Prop({ type: String, required: true })
   @IsString()
@@ -36,15 +36,14 @@ export class Board {
 
   @Prop({ type: Number })
   @IsNumber()
-  @IsOptional()
   views?: number;
 
   @Prop({ type: Number })
   @IsNumber()
-  @IsOptional()
   rating?: number;
 
   @Prop({ required: true, type: Date, default: Date.now() })
+  @IsDate()
   createdAt: Date;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
@@ -52,13 +51,13 @@ export class Board {
   owner: User;
 
   @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }])
-  @Type(() => BoardComment)
-  comments: BoardComment[];
+  @Type(() => CommunityComment)
+  comments: CommunityComment[];
 }
 
-export const BoardSchema = SchemaFactory.createForClass(Board);
+export const CommunitySchema = SchemaFactory.createForClass(Community);
 
-BoardSchema.virtual('boardId').get(function () {
-  const boardId = this._id.toString();
-  return boardId;
+CommunitySchema.virtual('communityId').get(function () {
+  const communityId = this._id.toString();
+  return communityId;
 });

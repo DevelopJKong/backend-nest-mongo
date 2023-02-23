@@ -1,14 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
 import { IsDate, IsString } from 'class-validator';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { User } from '../../users/entities/user.entity';
-import { Board } from './board.entity';
-import { Type } from 'class-transformer';
+import { User } from 'src/users/entities/user.entity';
+import { Community } from './community.entity';
 
-export type CommentDocument = HydratedDocument<Comment>;
+export type CommunityCommentDocument = HydratedDocument<CommunityComment>;
 
 @Schema()
-export class Comment {
+export class CommunityComment {
   _id: mongoose.Types.ObjectId;
 
   @IsString()
@@ -22,18 +22,18 @@ export class Comment {
   @Type(() => User)
   owner: User;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Board' })
-  @Type(() => Board)
-  board: Board;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Community' })
+  @Type(() => Community)
+  community: Community;
 
   @Prop({ required: true, type: Date, default: Date.now() })
   @IsDate()
   createdAt: Date;
 }
 
-export const CommentSchema = SchemaFactory.createForClass(Comment);
+export const CommunityCommentSchema = SchemaFactory.createForClass(CommunityComment);
 
-CommentSchema.virtual('commentId').get(function () {
+CommunityCommentSchema.virtual('commentId').get(function () {
   const commentId = this._id.toString();
   return commentId;
 });
