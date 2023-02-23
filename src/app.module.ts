@@ -10,6 +10,7 @@ import { JwtMiddleware } from './libs/jwt/jwt.middleware';
 import { JwtModule } from './libs/jwt/jwt.module';
 import { LoggerModule } from './libs/logger/logger.module';
 import { BoardsModule } from './boards/boards.module';
+import { CommunitiesModule } from './communities/communities.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,9 +18,17 @@ import { BoardsModule } from './boards/boards.module';
       envFilePath: '.env',
       validationSchema: Joi.object({
         DB_HOST: Joi.string().required(),
+        DB_PROD_HOST: Joi.string().required(),
+        NODE_ENV: Joi.string().required(),
+        JWT_PRIVATE_KEY: Joi.string().required(),
+        JWT_EXPIRES_SEC: Joi.string().required(),
+        REFRESH_EXPIRES_SEC: Joi.string().required(),
+        SHOP_PID_CODE: Joi.string().required(),
+        SHOP_API_KEY: Joi.string().required(),
+        SHOP_API_SECRET: Joi.string().required(),
       }),
     }),
-    MongooseModule.forRoot(process.env.DB_PROD_HOST, {
+    MongooseModule.forRoot(process.env.DB_HOST, {
       connectionFactory: connection => {
         connection.plugin(require('mongoose-autopopulate')); // eslint-disable-line
         console.log('Mongoose connection created');
@@ -36,6 +45,7 @@ import { BoardsModule } from './boards/boards.module';
     }),
     UsersModule,
     BoardsModule,
+    CommunitiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

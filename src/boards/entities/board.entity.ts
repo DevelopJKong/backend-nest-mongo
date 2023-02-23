@@ -3,6 +3,7 @@ import { IsString, IsNumber, IsOptional } from 'class-validator';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Type } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
+import { Comment } from './comment.entity';
 
 export type BoardDocument = HydratedDocument<Board>;
 
@@ -43,9 +44,16 @@ export class Board {
   @IsOptional()
   rating?: number;
 
+  @Prop({ required: true, type: Date, default: Date.now() })
+  createdAt: Date;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   @Type(() => User)
   owner: User;
+
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }])
+  @Type(() => Comment)
+  comments: Comment[];
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);
