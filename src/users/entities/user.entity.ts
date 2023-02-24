@@ -60,7 +60,7 @@ export class User {
   @IsString()
   role: UserRole;
 
-  @Prop({ type: String, required: false })
+  @Prop({ type: String, required: false, default: '' })
   @IsJWT()
   refreshToken: string;
 

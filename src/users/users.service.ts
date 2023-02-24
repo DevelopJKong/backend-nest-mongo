@@ -207,19 +207,19 @@ export class UsersService {
       const user = await this.users.findOne({ email });
 
       if (!user) {
-        return response.redirect('http://localhost:3000/login');
+        return response.redirect(`http://localhost:3000/login?error=${userError.notExistUser.error}`);
       }
       const verification = await this.verifications.findOne({ code });
 
       if (!verification) {
-        return response.redirect('http://localhost:3000/login');
+        return response.redirect(`http://localhost:3000/login?error=${userError.notExistVerification.error}`);
       }
 
       user.isVerified = true;
       user.save();
-      return response.redirect('http://localhost:3000/login');
+      return response.redirect('http://localhost:3000/login?success=true');
     } catch (error) {
-      return response.redirect('http://localhost:3000/login');
+      return response.redirect(`http://localhost:3000/login?error=${commonError.extraError.error}`);
     }
   }
 
