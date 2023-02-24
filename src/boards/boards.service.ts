@@ -14,8 +14,8 @@ import { DeleteBoardOutput } from './dto/delete-board.dto';
 @Injectable()
 export class BoardsService {
   constructor(
-    @InjectModel(Board.name) private boards: Model<BoardDocument>,
-    @InjectModel(User.name) private users: Model<UserDocument>,
+    @InjectModel(Board.name) private readonly boards: Model<BoardDocument>,
+    @InjectModel(User.name) private readonly users: Model<UserDocument>,
   ) {}
   async getSeeBoards(): Promise<GetSeeBoardsOutput> {
     try {
@@ -114,7 +114,7 @@ export class BoardsService {
       return {
         ok: true,
         message: {
-          text: boardSuccess.postWriteBoard.text,
+          text: boardSuccess.postCreateBoard.text,
           statusCode: HttpStatus.OK,
         },
       };

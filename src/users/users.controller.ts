@@ -10,6 +10,7 @@ import { EmailCheckInput, EmailCheckOutput } from './dto/email-check.dto';
 import { CertificatePhoneInput, CertificatePhoneOutput } from './dto/certificate-phone.dto';
 import { CertificateEmailInput } from './dto/certificate-email.dto';
 import { Response } from 'express';
+import { Role } from '../libs/auth/role.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -33,12 +34,6 @@ export class UsersController {
     return this.usersService.postLogin(loginInput);
   }
 
-  @Put('/edit')
-  @HttpCode(HttpStatus.OK)
-  async editProfile(@Body() editProfileInput: EditProfileInput): Promise<EditProfileOutput> {
-    return this.usersService.putEditProfile(editProfileInput);
-  }
-
   @Post('/email-check')
   @HttpCode(HttpStatus.OK)
   async emailCheck(@Body() emailCheckInput: EmailCheckInput): Promise<EmailCheckOutput> {
@@ -58,5 +53,12 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async certificatePhone(@Body() certificatePhoneInput: CertificatePhoneInput): Promise<CertificatePhoneOutput> {
     return this.usersService.postCertificatePhone(certificatePhoneInput);
+  }
+
+  @Put('/edit')
+  @Role(['User', 'Admin'])
+  @HttpCode(HttpStatus.OK)
+  async editProfile(@Body() editProfileInput: EditProfileInput): Promise<EditProfileOutput> {
+    return this.usersService.putEditProfile(editProfileInput);
   }
 }

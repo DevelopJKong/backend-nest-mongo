@@ -32,7 +32,7 @@ export const boardSuccess = {
   getSeeBoard: {
     text: '게시물 조회 성공',
   },
-  postWriteBoard: {
+  postCreateBoard: {
     text: '게시물 생성 성공',
   },
   putEditBoard: {
@@ -43,30 +43,11 @@ export const boardSuccess = {
   },
 } as const;
 
-export const shopSuccess = {
-  getSeeShopItems: {
-    text: '상점 전체 조회 성공',
+export const noticeSuccess = {
+  getSeeNotices: {
+    text: '공지사항 전체 조회 성공',
   },
-  getSeeShopItem: {
-    text: '상점 조회 성공',
-  },
-  postCreateShopItem: {
-    text: '상품 생성 성공',
-  },
-  postSuccessShopItem: {
-    vbankIssued: {
-      status: 'vbankIssued',
-      text: '가상계좌 발급 성공',
-    },
-    paid: {
-      status: 'success',
-      text: '일반 결제 성공',
-    },
-  },
-  putEditShopItem: {
-    text: '상품 수정 성공',
-  },
-  deleteShopItem: {
-    text: '상품 삭제 성공',
+  postCreateNotice: {
+    text: '공지사항 생성 성공',
   },
 } as const;

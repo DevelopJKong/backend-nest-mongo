@@ -12,6 +12,7 @@ import { LoggerModule } from './libs/logger/logger.module';
 import { BoardsModule } from './boards/boards.module';
 import { CommunitiesModule } from './communities/communities.module';
 import { MailModule } from './mail/mail.module';
+import { AdminModule } from './admin/admin.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -58,6 +59,7 @@ import { MailModule } from './mail/mail.module';
     UsersModule,
     BoardsModule,
     CommunitiesModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

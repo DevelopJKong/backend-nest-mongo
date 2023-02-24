@@ -21,6 +21,7 @@ import { User } from '../users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { boardOptions } from '../common/utils/multer.options';
 import { EditBoardInput, EditBoardOutput } from './dto/edit-board.dto';
+import { Role } from '../libs/auth/role.decorator';
 
 @Controller('boards')
 export class BoardsController {
@@ -39,7 +40,9 @@ export class BoardsController {
   }
 
   @Post('/write')
+  @Role(['User', 'Admin'])
   @UseInterceptors(FileInterceptor('image', boardOptions))
+  @HttpCode(HttpStatus.OK)
   async postWriteBoard(
     @Body() writeBoardInput: CreateBoardInput,
     @AuthUser() authUser: User,
@@ -49,6 +52,7 @@ export class BoardsController {
   }
 
   @Put('/edit')
+  @Role(['User', 'Admin'])
   @UseInterceptors(FileInterceptor('image', boardOptions))
   @HttpCode(HttpStatus.OK)
   async editBoard(
@@ -61,6 +65,7 @@ export class BoardsController {
   }
 
   @Delete('/delete')
+  @Role(['User', 'Admin'])
   @HttpCode(HttpStatus.OK)
   async deleteBoard(@AuthUser() authUser: User, @Query() { id }: { id: string }) {
     return this.boardsService.deleteBoard(authUser.userId, Number(id));

@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsObject } from 'class-validator';
 import { Board } from '../entities/board.entity';
 import { CoreOutput } from '../../common/dto/output.dto';
 
@@ -8,8 +8,7 @@ export class GetSeeBoardInput {
 }
 
 export class GetSeeBoardOutput extends CoreOutput {
-  @IsString()
+  @IsObject()
   @IsOptional()
   board?: Board;
-  //
 }

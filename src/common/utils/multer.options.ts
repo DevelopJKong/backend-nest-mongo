@@ -28,3 +28,12 @@ export const EditorOptions = {
   limits: { fileSize: 5242880 },
   fileFilter: imageFileFilter,
 };
+
+export const NoticeOptions = {
+  storage: diskStorage({
+    destination: './files/notice',
+    filename: editFileName,
+  }),
+  limits: { fileSize: 5242880 },
+  fileFilter: imageFileFilter,
+};

@@ -5,8 +5,6 @@ import { User, UserSchema } from '../users/entities/user.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Board, BoardSchema } from './entities/board.entity';
 import { BoardComment, BoardCommentSchema } from './entities/board-comment.entity';
-import { Carousel, CarouselSchema } from './entities/carousel.entity';
-import { Notice, NoticeSchema } from './entities/notice.entity';
 
 @Module({
   imports: [
@@ -14,8 +12,6 @@ import { Notice, NoticeSchema } from './entities/notice.entity';
       { name: User.name, schema: UserSchema },
       { name: Board.name, schema: BoardSchema },
       { name: BoardComment.name, schema: BoardCommentSchema },
-      { name: Carousel.name, schema: CarouselSchema },
-      { name: Notice.name, schema: NoticeSchema },
     ]),
   ],
   providers: [BoardsService],

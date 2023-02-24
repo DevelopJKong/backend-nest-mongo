@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsDate, IsString, IsNumber } from 'class-validator';
+import { IsDate, IsString, IsNumber, IsOptional } from 'class-validator';
 import mongoose, { HydratedDocument } from 'mongoose';
 
 export type NoticeDocument = HydratedDocument<Notice>;
@@ -18,6 +18,11 @@ export class Notice {
   @Prop({ required: true, type: String })
   @IsString()
   content: string;
+
+  @Prop({ type: String, default: '' })
+  @IsString()
+  @IsOptional()
+  navigateUrl?: string;
 
   @Prop({ required: true, type: String })
   @IsString()
