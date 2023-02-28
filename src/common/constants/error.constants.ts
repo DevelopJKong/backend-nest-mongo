@@ -8,7 +8,7 @@ export const userError = {
     text: '존재하지 않는 이메일[유저] 입니다.',
   },
   notMatchedPasswords: {
-    error: 'notCorrectPasswords',
+    error: 'notMatchedPasswords',
     text: '비밀번호와 확인 비밀번호가 일치 하지 않습니다.',
   },
   wrongPassword: {
