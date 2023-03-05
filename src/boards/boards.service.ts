@@ -7,8 +7,8 @@ import { GetSeeBoardInput, GetSeeBoardOutput } from './dto/see-board.dto';
 import { CreateBoardOutput, CreateBoardInput } from './dto/write-board.dto';
 import { User, UserDocument } from '../users/entities/user.entity';
 import { EditBoardInput, EditBoardOutput } from './dto/edit-board.dto';
-import { boardSuccess } from '../common/constants/success.constants';
-import { boardError, commonError, userError } from '../common/constants/error.constants';
+import { BOARD_SUCCESS } from '../common/constants/success.constants';
+import { BOARD_ERROR, COMMON_ERROR, USER_ERROR } from '../common/constants/error.constants';
 import { DeleteBoardOutput } from './dto/delete-board.dto';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class BoardsService {
       return {
         ok: true,
         message: {
-          text: boardSuccess.getSeeBoards.text,
+          text: BOARD_SUCCESS.getSeeBoards.text,
           statusCode: HttpStatus.OK,
         },
         boards,
@@ -33,7 +33,7 @@ export class BoardsService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: boardSuccess.getSeeBoards.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: BOARD_SUCCESS.getSeeBoards.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -44,9 +44,9 @@ export class BoardsService {
       if (!board) {
         return {
           ok: false,
-          error: new Error(boardError.notExistBoard.error),
+          error: new Error(BOARD_ERROR.notExistBoard.error),
           message: {
-            text: boardError.notExistBoard.text,
+            text: BOARD_ERROR.notExistBoard.text,
             statusCode: HttpStatus.NOT_FOUND,
           },
         };
@@ -55,7 +55,7 @@ export class BoardsService {
       return {
         ok: true,
         message: {
-          text: boardSuccess.getSeeBoard.text,
+          text: BOARD_SUCCESS.getSeeBoard.text,
           statusCode: HttpStatus.OK,
         },
         board,
@@ -64,7 +64,7 @@ export class BoardsService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -79,9 +79,9 @@ export class BoardsService {
         // ! 유저가 존재 하지 않을 경우
         return {
           ok: false,
-          error: new Error(userError.notExistUser.error),
+          error: new Error(USER_ERROR.notExistUser.error),
           message: {
-            text: userError.notExistUser.text,
+            text: USER_ERROR.notExistUser.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -101,9 +101,9 @@ export class BoardsService {
       if (!newBoard) {
         return {
           ok: false,
-          error: new Error(boardError.createFailedError.error),
+          error: new Error(BOARD_ERROR.createFailedError.error),
           message: {
-            text: boardError.createFailedError.text,
+            text: BOARD_ERROR.createFailedError.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -114,7 +114,7 @@ export class BoardsService {
       return {
         ok: true,
         message: {
-          text: boardSuccess.postCreateBoard.text,
+          text: BOARD_SUCCESS.postCreateBoard.text,
           statusCode: HttpStatus.OK,
         },
       };
@@ -123,7 +123,7 @@ export class BoardsService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -140,9 +140,9 @@ export class BoardsService {
         // ! 유저가 존재 하지 않을 경우
         return {
           ok: false,
-          error: new Error(userError.notExistUser.error),
+          error: new Error(USER_ERROR.notExistUser.error),
           message: {
-            text: userError.notExistUser.text,
+            text: USER_ERROR.notExistUser.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -153,9 +153,9 @@ export class BoardsService {
         // ! 게시물이 존재 하지 않을 경우
         return {
           ok: false,
-          error: new Error(boardError.notExistBoard.error),
+          error: new Error(BOARD_ERROR.notExistBoard.error),
           message: {
-            text: boardError.notExistBoard.text,
+            text: BOARD_ERROR.notExistBoard.text,
             statusCode: HttpStatus.NOT_FOUND,
           },
         };
@@ -189,7 +189,7 @@ export class BoardsService {
       return {
         ok: true,
         message: {
-          text: boardSuccess.putEditBoard.text,
+          text: BOARD_SUCCESS.putEditBoard.text,
           statusCode: HttpStatus.OK,
         },
       };
@@ -197,7 +197,7 @@ export class BoardsService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -208,9 +208,9 @@ export class BoardsService {
         // ! 유저가 존재 하지 않을 경우
         return {
           ok: false,
-          error: new Error(userError.notExistUser.error),
+          error: new Error(USER_ERROR.notExistUser.error),
           message: {
-            text: userError.notExistUser.text,
+            text: USER_ERROR.notExistUser.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -220,7 +220,7 @@ export class BoardsService {
       return {
         ok: true,
         message: {
-          text: boardSuccess.deleteBoard.text,
+          text: BOARD_SUCCESS.deleteBoard.text,
           statusCode: HttpStatus.OK,
         },
       };
@@ -228,7 +228,7 @@ export class BoardsService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }

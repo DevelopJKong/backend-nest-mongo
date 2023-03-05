@@ -8,7 +8,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
  */
 export function setupSwagger(app: INestApplication): void {
   const options = new DocumentBuilder()
-    .setTitle('NEST-REST-API Docs')
+    .setTitle('NEST-REST-API MONGO Docs')
     .setDescription('NestJS Study API description')
     .setVersion('1.0.0')
     .build();

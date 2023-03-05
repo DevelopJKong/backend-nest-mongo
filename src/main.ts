@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AuthForbiddenException } from './libs/auth/auth.filter';
 import { LoggerService } from './libs/logger/logger.service';
 import { LoggerInterceptor } from './libs/logger/logger.interceptor';
+import { setupSwagger } from './common/utils/setup-swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -12,6 +13,7 @@ async function bootstrap() {
   });
   const log = new LoggerService({ nodeEnv: process.env.NODE_ENV });
   const PORT = 5000;
+  setupSwagger(app);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe()); // ! class-validator를 사용하기 위해 추가
   app.useGlobalInterceptors(new LoggerInterceptor(log));

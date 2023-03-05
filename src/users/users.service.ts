@@ -1,5 +1,5 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
-import { CreateUserOutput } from './dto/create-user.dto';
+import { JoinOutput } from './dto/join.dto';
 import { Model } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { User, UserDocument } from './entities/user.entity';
@@ -11,13 +11,14 @@ import { EmailCheckInput, EmailCheckOutput } from './dto/email-check.dto';
 import { CertificatePhoneInput, CertificatePhoneOutput } from './dto/certificate-phone.dto';
 import axios from 'axios';
 import { IAMPORT_TOKEN_URL } from '../common/constants/common.constants';
-import { userSuccess } from '../common/constants/success.constants';
-import { commonError, userError } from '../common/constants/error.constants';
+import { USER_SUCCESS } from '../common/constants/success.constants';
+import { COMMON_ERROR, USER_ERROR } from '../common/constants/error.constants';
 import { Verification, VerificationDocument } from './entities/verification.entity';
 import { MailService } from 'src/mail/mail.service';
 import { CertificateEmailInput } from './dto/certificate-email.dto';
 import * as mongoose from 'mongoose';
 import { Response } from 'express';
+import { FindByIdOutput } from './dto/find-by-id.dto';
 @Injectable()
 export class UsersService {
   constructor(
@@ -28,31 +29,31 @@ export class UsersService {
     private readonly mailService: MailService,
   ) {}
 
-  async getFindById(userId: string) {
+  async getFindById(userId: string): Promise<FindByIdOutput> {
     try {
-      const user = await this.users.findById(userId);
+      const user = await this.users.findById(userId, '-boards -communities');
       //* success
       return {
         ok: true,
-        message: { text: userSuccess.getFindById.text, statusCode: HttpStatus.OK },
+        message: { text: USER_SUCCESS.getFindById.text, statusCode: HttpStatus.OK },
         user,
       };
     } catch (error) {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
 
   async getFindByEmail(email: string) {
     try {
-      const user = await this.users.findOne({ email });
+      const user = await this.users.findOne({ email }, '-boards -communities');
       return {
         ok: true,
         message: {
-          text: userSuccess.getFindByEmail.text,
+          text: USER_SUCCESS.getFindByEmail.text,
           statusCode: HttpStatus.OK,
         },
         user,
@@ -61,29 +62,21 @@ export class UsersService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
 
-  async createUser({
-    name,
-    username,
-    email,
-    password,
-    confirmationPassword,
-    region,
-    phoneNum,
-  }): Promise<CreateUserOutput> {
+  async createUser({ name, username, email, password, confirmationPassword, region, phoneNum }): Promise<JoinOutput> {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
       if (password !== confirmationPassword) {
         return {
           ok: false,
-          error: new Error(userError.notMatchedPasswords.error),
+          error: new Error(USER_ERROR.notMatchedPasswords.error),
           message: {
-            text: userError.notMatchedPasswords.text,
+            text: USER_ERROR.notMatchedPasswords.text,
             statusCode: HttpStatus.UNAUTHORIZED,
           },
         };
@@ -121,7 +114,7 @@ export class UsersService {
       return {
         ok: true,
         message: {
-          text: userSuccess.postJoin.text,
+          text: USER_SUCCESS.postJoin.text,
           statusCode: HttpStatus.OK,
         },
       };
@@ -130,7 +123,7 @@ export class UsersService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     } finally {
       await session.endSession();
@@ -144,9 +137,9 @@ export class UsersService {
       if (!user) {
         return {
           ok: false,
-          error: new Error(userError.notExistUser.error),
+          error: new Error(USER_ERROR.notExistUser.error),
           message: {
-            text: userError.notExistUser.text,
+            text: USER_ERROR.notExistUser.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -157,10 +150,10 @@ export class UsersService {
       if (!isValidationCheck) {
         return {
           ok: false,
-          error: new Error(userError.notExistUser.error),
+          error: new Error(USER_ERROR.notExistUser.error),
           message: {
-            text: userError.notExistUser.text,
-            statusCode: HttpStatus.BAD_REQUEST,
+            text: USER_ERROR.notExistUser.text,
+            statusCode: HttpStatus.UNAUTHORIZED,
           },
         };
       }
@@ -168,9 +161,9 @@ export class UsersService {
       if (!user.isVerified) {
         return {
           ok: false,
-          error: new Error(userError.notVerifiedUser.error),
+          error: new Error(USER_ERROR.notVerifiedUser.error),
           message: {
-            text: userError.notVerifiedUser.text,
+            text: USER_ERROR.notVerifiedUser.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -190,7 +183,7 @@ export class UsersService {
         token,
         refreshToken: hashedRefreshToken,
         message: {
-          text: userSuccess.postLogin.text,
+          text: USER_SUCCESS.postLogin.text,
           statusCode: HttpStatus.OK,
         },
       };
@@ -198,7 +191,7 @@ export class UsersService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -207,19 +200,19 @@ export class UsersService {
       const user = await this.users.findOne({ email });
 
       if (!user) {
-        return response.redirect(`http://localhost:3000/login?error=${userError.notExistUser.error}`);
+        return response.redirect(`http://localhost:3000/login?error=${USER_ERROR.notExistUser.error}`);
       }
       const verification = await this.verifications.findOne({ code });
 
       if (!verification) {
-        return response.redirect(`http://localhost:3000/login?error=${userError.notExistVerification.error}`);
+        return response.redirect(`http://localhost:3000/login?error=${USER_ERROR.notExistVerification.error}`);
       }
 
       user.isVerified = true;
       user.save();
       return response.redirect('http://localhost:3000/login?success=true');
     } catch (error) {
-      return response.redirect(`http://localhost:3000/login?error=${commonError.extraError.error}`);
+      return response.redirect(`http://localhost:3000/login?error=${COMMON_ERROR.extraError.error}`);
     }
   }
 
@@ -240,9 +233,9 @@ export class UsersService {
       if (!user) {
         return {
           ok: false,
-          error: new Error(userError.notExistUser.error),
+          error: new Error(USER_ERROR.notExistUser.error),
           message: {
-            text: userError.notExistUser.text,
+            text: USER_ERROR.notExistUser.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -252,9 +245,9 @@ export class UsersService {
         if (password !== confirmationPassword) {
           return {
             ok: false,
-            error: new Error(userError.notMatchedPasswords.error),
+            error: new Error(USER_ERROR.notMatchedPasswords.error),
             message: {
-              text: userError.notMatchedPasswords.text,
+              text: USER_ERROR.notMatchedPasswords.text,
               statusCode: HttpStatus.UNAUTHORIZED,
             },
           };
@@ -290,9 +283,9 @@ export class UsersService {
             // ! 유저가 이미 존재하는 유저를 입력 했을 경우 에러
             return {
               ok: false,
-              error: new Error(userError.existUser.error),
+              error: new Error(USER_ERROR.existUser.error),
               message: {
-                text: userError.existUser.text,
+                text: USER_ERROR.existUser.text,
                 statusCode: HttpStatus.BAD_REQUEST,
               },
             };
@@ -306,7 +299,7 @@ export class UsersService {
       return {
         ok: true,
         message: {
-          text: userSuccess.putEditProfile.text,
+          text: USER_SUCCESS.putEditProfile.text,
           statusCode: HttpStatus.OK,
         },
       };
@@ -314,7 +307,7 @@ export class UsersService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -325,9 +318,9 @@ export class UsersService {
         // ! 이미 존재하는 유저 일 경우
         return {
           ok: false,
-          error: new Error(userError.existUser.error),
+          error: new Error(USER_ERROR.existUser.error),
           message: {
-            text: userError.existUser.text,
+            text: USER_ERROR.existUser.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -335,7 +328,7 @@ export class UsersService {
       return {
         ok: true,
         message: {
-          text: userSuccess.postEmailCheck.text,
+          text: USER_SUCCESS.postEmailCheck.text,
           statusCode: HttpStatus.OK,
         },
       };
@@ -343,7 +336,7 @@ export class UsersService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }
@@ -375,9 +368,9 @@ export class UsersService {
         return {
           ok: false,
           status: STATUS.FAIL,
-          error: new Error(userError.existUser.error),
+          error: new Error(USER_ERROR.existUser.error),
           message: {
-            text: userError.existUser.text,
+            text: USER_ERROR.existUser.text,
             statusCode: HttpStatus.BAD_REQUEST,
           },
         };
@@ -387,7 +380,7 @@ export class UsersService {
         ok: true,
         status: STATUS.SUCCESS,
         message: {
-          text: userSuccess.postCertification.text,
+          text: USER_SUCCESS.postCertificationPhone.text,
           statusCode: HttpStatus.OK,
         },
       };
@@ -396,7 +389,7 @@ export class UsersService {
       return {
         ok: false,
         error: new Error(error),
-        message: { text: commonError.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
     }
   }

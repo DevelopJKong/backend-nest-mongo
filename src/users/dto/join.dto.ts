@@ -2,7 +2,7 @@ import { IsPhoneNumber, IsString, Matches } from 'class-validator';
 import { User } from '../entities/user.entity';
 import { Transform } from 'class-transformer';
 import { CoreOutput } from '../../common/dto/output.dto';
-export class CreateUserInput {
+export class JoinInput {
   @IsString({ message: '이름을 입력해주세요.' })
   name: string;
 
@@ -30,6 +30,6 @@ export class CreateUserInput {
   phoneNum: string;
 }
 
-export class CreateUserOutput extends CoreOutput {
+export class JoinOutput extends CoreOutput {
   user?: User;
 }

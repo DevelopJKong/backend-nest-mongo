@@ -1,4 +1,4 @@
-export const userSuccess = {
+export const USER_SUCCESS = {
   getFindById: {
     text: '회원 아이디 호출 성공',
   },
@@ -14,7 +14,10 @@ export const userSuccess = {
   putEditProfile: {
     text: '회원 정보 수정 성공',
   },
-  postCertification: {
+  postCertificateEmail: {
+    text: '이메일 인증 성공',
+  },
+  postCertificationPhone: {
     text: '휴대폰 인증 성공',
   },
   postEmailCheck: {
@@ -25,7 +28,7 @@ export const userSuccess = {
   },
 } as const;
 
-export const boardSuccess = {
+export const BOARD_SUCCESS = {
   getSeeBoards: {
     text: '게시물 전체 조회 성공',
   },
@@ -43,7 +46,7 @@ export const boardSuccess = {
   },
 } as const;
 
-export const noticeSuccess = {
+export const NOTICE_SUCCESS = {
   getSeeNotices: {
     text: '공지사항 전체 조회 성공',
   },
