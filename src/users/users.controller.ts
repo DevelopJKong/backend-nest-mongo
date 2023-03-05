@@ -145,7 +145,7 @@ export class UsersController {
   })
   // ? 500 에러 케이스
   @ApiInternalServerErrorResponse({
-    description: '서버 에러',
+    description: COMMON_ERROR.extraError.text,
     schema: USER_ERROR_RESPONSE.internalServerError,
   })
   // 요청 바디
