@@ -48,7 +48,7 @@ export class BoardsController {
     @AuthUser() authUser: User,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<CreateBoardOutput> {
-    return this.boardsService.postWriteBoard(writeBoardInput, authUser.userId, file);
+    return this.boardsService.postCreateBoard(writeBoardInput, authUser.userId, file);
   }
 
   @Put('/edit')

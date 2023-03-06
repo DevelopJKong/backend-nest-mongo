@@ -4,9 +4,10 @@ import * as nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import { LoggerService } from 'src/libs/logger/logger.service';
 import { CONFIG_OPTIONS } from '../common/constants/common.constants';
+import { IMailService } from './interface/mail-service.interface';
 
 @Injectable()
-export class MailService {
+export class MailService implements IMailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
     private readonly log: LoggerService,

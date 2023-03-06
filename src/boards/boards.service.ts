@@ -10,9 +10,10 @@ import { EditBoardInput, EditBoardOutput } from './dto/edit-board.dto';
 import { BOARD_SUCCESS } from '../common/constants/success.constants';
 import { BOARD_ERROR, COMMON_ERROR, USER_ERROR } from '../common/constants/error.constants';
 import { DeleteBoardOutput } from './dto/delete-board.dto';
+import { IBoardsService } from './interface/boards-service.interface';
 
 @Injectable()
-export class BoardsService {
+export class BoardsService implements IBoardsService {
   constructor(
     @InjectModel(Board.name) private readonly boards: Model<BoardDocument>,
     @InjectModel(User.name) private readonly users: Model<UserDocument>,
@@ -68,7 +69,7 @@ export class BoardsService {
       };
     }
   }
-  async postWriteBoard(
+  async postCreateBoard(
     { title, content, boardImgName }: CreateBoardInput,
     userId: string,
     file: Express.Multer.File,
