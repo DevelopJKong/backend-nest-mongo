@@ -13,6 +13,7 @@ import { BoardsModule } from './boards/boards.module';
 import { CommunitiesModule } from './communities/communities.module';
 import { MailModule } from './mail/mail.module';
 import { AdminModule } from './admin/admin.module';
+import { HealthModule } from './health/health.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -60,6 +61,7 @@ import { AdminModule } from './admin/admin.module';
     BoardsModule,
     CommunitiesModule,
     AdminModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

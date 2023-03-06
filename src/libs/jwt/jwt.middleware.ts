@@ -61,7 +61,7 @@ export class JwtMiddleware implements NestMiddleware {
         }
 
         if (typeof refreshTokenDecoded === 'object' && refreshTokenDecoded.hasOwnProperty('exp')) {
-          const newToken = this.jwtService.sign({ id: user.id });
+          const newToken = this.jwtService.sign({ id: user.userId });
           decoded = this.jwtService.verify(newToken.toString());
         }
       }

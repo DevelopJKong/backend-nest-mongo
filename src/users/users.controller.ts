@@ -94,7 +94,7 @@ export class UsersController {
   })
   @HttpCode(HttpStatus.OK)
   async postJoin(@Body() joinInput: JoinInput): Promise<JoinOutput> {
-    return this.usersService.createUser(joinInput);
+    return this.usersService.postJoin(joinInput);
   }
 
   @Post('/login')

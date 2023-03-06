@@ -1,5 +1,5 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
-import { JoinOutput } from './dto/join.dto';
+import { JoinOutput, JoinInput } from './dto/join.dto';
 import { Model } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { User, UserDocument } from './entities/user.entity';
@@ -19,8 +19,10 @@ import { CertificateEmailInput } from './dto/certificate-email.dto';
 import * as mongoose from 'mongoose';
 import { Response } from 'express';
 import { FindByIdOutput } from './dto/find-by-id.dto';
+import { FindByEmailOutput } from './dto/find-by-email.dto';
+import { IUserService } from './interface/users-service.interface';
 @Injectable()
-export class UsersService {
+export class UsersService implements IUserService {
   constructor(
     @InjectModel(User.name) private readonly users: Model<UserDocument>,
     @InjectModel(Verification.name) private readonly verifications: Model<VerificationDocument>,
@@ -47,7 +49,7 @@ export class UsersService {
     }
   }
 
-  async getFindByEmail(email: string) {
+  async getFindByEmail(email: string): Promise<FindByEmailOutput> {
     try {
       const user = await this.users.findOne({ email }, '-boards -communities');
       return {
@@ -67,7 +69,15 @@ export class UsersService {
     }
   }
 
-  async createUser({ name, username, email, password, confirmationPassword, region, phoneNum }): Promise<JoinOutput> {
+  async postJoin({
+    name,
+    username,
+    email,
+    password,
+    confirmationPassword,
+    region,
+    phoneNum,
+  }: JoinInput): Promise<JoinOutput> {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {

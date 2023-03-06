@@ -4,6 +4,7 @@ import mongoose, { HydratedDocument } from 'mongoose';
 import { Type } from 'class-transformer';
 import { User } from '../../users/entities/user.entity';
 import { BoardComment } from './board-comment.entity';
+import { Category } from './category.entity';
 
 export type BoardDocument = HydratedDocument<Board>;
 
@@ -54,6 +55,10 @@ export class Board {
   @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }])
   @Type(() => BoardComment)
   comments: BoardComment[];
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
+  @Type(() => Category)
+  category: Category;
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);

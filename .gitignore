@@ -34,6 +34,18 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# package-lock.json
 package-lock.json
 
+# yarn 관련
+yarn.lock
+yarn-error.log
+
+# env 관련
 .env
+.env.*
+
+# files
+files
+
+
