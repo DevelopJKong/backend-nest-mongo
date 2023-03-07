@@ -178,7 +178,8 @@ export class UsersService implements IUserService {
           },
         };
       }
-      const token = this.jwtService.sign({ id: user._id });
+      delete user.password;
+      const token = this.jwtService.sign({ id: user.userId });
 
       const refreshToken = this.jwtService.refreshSign({});
 
@@ -239,7 +240,7 @@ export class UsersService implements IUserService {
       const searchParam: Array<{ email: string }> = [];
 
       const user = await this.users.findOne({ email });
-
+      if (!password || !confirmationPassword) delete user.password;
       if (!user) {
         return {
           ok: false,

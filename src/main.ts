@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
-import { AuthForbiddenException } from './libs/auth/auth.filter';
 import { LoggerService } from './libs/logger/logger.service';
 import { LoggerInterceptor } from './libs/logger/logger.interceptor';
 import { setupSwagger } from './common/utils/setup-swagger';
@@ -15,9 +14,13 @@ async function bootstrap() {
   const PORT = 5000;
   setupSwagger(app);
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe()); // ! class-validator를 사용하기 위해 추가
+  // ! class-validator를 사용하기 위해 추가
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
   app.useGlobalInterceptors(new LoggerInterceptor(log));
-  app.useGlobalFilters(new AuthForbiddenException(log));
   await app.listen(PORT);
 
   console.log(`Server is running on port 🍘  http://localhost:${PORT}`);

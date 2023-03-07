@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpStatus, Put, Get, Res } from '@nestjs/common';
+import { Controller, Post, Body, HttpStatus, Put, Get, Res, UseFilters } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JoinInput as JoinInput, JoinOutput as JoinOutput } from './dto/join.dto';
 import { LoginOutput, LoginInput } from './dto/login.dto';
@@ -53,6 +53,7 @@ export class UsersController {
     description: COMMON_ERROR.extraError.text,
     schema: USER_ERROR_RESPONSE.internalServerError,
   })
+  @UseFilters()
   @HttpCode(HttpStatus.OK)
   async getFindById(@AuthUser() authUser: User): Promise<FindByIdOutput> {
     return this.usersService.getFindById(authUser.userId);
@@ -169,6 +170,11 @@ export class UsersController {
   @ApiMovedPermanentlyResponse({
     description: USER_SUCCESS.postCertificateEmail.text,
     status: HttpStatus.MOVED_PERMANENTLY,
+  })
+  // ? 500 에러 케이스
+  @ApiInternalServerErrorResponse({
+    description: COMMON_ERROR.extraError.text,
+    schema: USER_ERROR_RESPONSE.internalServerError,
   })
   @HttpCode(HttpStatus.OK)
   async postCertificateEmail(

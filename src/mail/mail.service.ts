@@ -1,4 +1,4 @@
-import { MailModuleOptions } from './mail.interface';
+import { MailModuleOptions } from './interface/mail.interface';
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
