@@ -208,7 +208,7 @@ export class UsersService implements IUserService {
   }
   async postCertificateEmail({ code, email }: CertificateEmailInput, response: Response): Promise<void> {
     try {
-      const user = await this.users.findOne({ email });
+      const user = await this.users.findOne({ email }, '-password');
 
       if (!user) {
         return response.redirect(`http://localhost:3000/login?error=${USER_ERROR.notExistUser.error}`);
