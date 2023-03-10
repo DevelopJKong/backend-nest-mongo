@@ -15,13 +15,14 @@ import { BoardsService } from './boards.service';
 import { HttpCode } from '@nestjs/common/decorators/http/http-code.decorator';
 import { GetSeeBoardsOutput } from './dto/see-boards.dto';
 import { GetSeeBoardInput } from './dto/see-board.dto';
-import { CreateBoardOutput, CreateBoardInput } from './dto/write-board.dto';
+import { CreateBoardOutput, CreateBoardInput } from './dto/create-board.dto';
 import { AuthUser } from 'src/libs/auth/auth-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { boardOptions } from '../common/utils/multer.options';
 import { EditBoardInput, EditBoardOutput } from './dto/edit-board.dto';
 import { Role } from '../libs/auth/role.decorator';
+import { CreateCategoryInput, CreateCategoryOutput } from './dto/create-category.dto';
 
 @Controller('boards')
 export class BoardsController {
@@ -39,10 +40,10 @@ export class BoardsController {
     return this.boardsService.getSeeBoard({ id });
   }
 
-  @Post('/write')
+  @Post('/create')
   @Role(['User', 'Admin'])
   @UseInterceptors(FileInterceptor('image', boardOptions))
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   async postWriteBoard(
     @Body() writeBoardInput: CreateBoardInput,
     @AuthUser() authUser: User,
@@ -69,5 +70,12 @@ export class BoardsController {
   @HttpCode(HttpStatus.OK)
   async deleteBoard(@AuthUser() authUser: User, @Query() { id }: { id: string }) {
     return this.boardsService.deleteBoard(authUser.userId, Number(id));
+  }
+
+  @Post('/category/create')
+  @Role(['Admin'])
+  @HttpCode(HttpStatus.CREATED)
+  async postCreateCategory(@Body() createCategoryInput: CreateCategoryInput): Promise<CreateCategoryOutput> {
+    return this.boardsService.postCreateCategory(createCategoryInput);
   }
 }

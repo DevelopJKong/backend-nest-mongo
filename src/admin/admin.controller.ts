@@ -16,9 +16,9 @@ export class AdminController {
     return this.adminService.getSeeNotices();
   }
 
-  @Post('/notices')
+  @Post('/create')
   @UseInterceptors(FileInterceptor('image', NoticeOptions))
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @Role(['Admin'])
   async postCreateNotice(
     @Body() createNoticeInput: CreateNoticeInput,

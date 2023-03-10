@@ -59,6 +59,10 @@ export class Board {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Category' })
   @Type(() => Category)
   category: Category;
+
+  @IsString()
+  @IsOptional()
+  categoryName?: string;
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);

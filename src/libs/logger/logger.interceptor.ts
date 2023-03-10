@@ -27,11 +27,10 @@ export class LoggerInterceptor<T> implements NestInterceptor<T, Response<T>> {
           const colorMethod = chalk.yellow(`${methodName}()`);
           const colorStatus = chalk.cyan(` , [Status Code] : ${colorStatusCode}`);
           const colorText = chalk.green(`${text}`);
+          const colorMessage = chalk.green(`[Success Message] : ${colorText}`);
 
           // * 콘솔에 찍힐때는 컬러 포함
-          this.log
-            .logger()
-            .info(`${colorHttpMethod} | ${colorName}${colorMethod}${colorStatus} | [Success Message] ::: ${colorText}`);
+          this.log.logger().info(`${colorHttpMethod} | ${colorName}${colorMethod}${colorStatus} | ${colorMessage}`);
         } else {
           const { message, stack, name } = data.error;
           const colorHttpMethodName = chalk.red(`${httpMethodName}`);

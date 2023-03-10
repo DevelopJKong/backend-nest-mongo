@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { CreateNoticeInput } from './dto/create-notice.dto';
-import { CreateBoardOutput } from '../boards/dto/write-board.dto';
+import { CreateBoardOutput } from '../boards/dto/create-board.dto';
 import { COMMON_ERROR } from '../common/constants/error.constants';
 import { NOTICE_SUCCESS } from '../common/constants/success.constants';
 import { SeeNoticesOutput } from './dto/see-notices.dto';

@@ -44,6 +44,9 @@ export const BOARD_SUCCESS = {
   deleteBoard: {
     text: '게시물 삭제 성공',
   },
+  postCreateCategory: {
+    text: '카테고리 생성 성공',
+  },
 } as const;
 
 export const NOTICE_SUCCESS = {

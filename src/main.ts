@@ -5,6 +5,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { LoggerService } from './libs/logger/logger.service';
 import { LoggerInterceptor } from './libs/logger/logger.interceptor';
 import { setupSwagger } from './common/utils/setup-swagger';
+import * as express from 'express';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -20,6 +22,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.use('/files', express.static(join(__dirname, '../files')));
   app.useGlobalInterceptors(new LoggerInterceptor(log));
   await app.listen(PORT);
 

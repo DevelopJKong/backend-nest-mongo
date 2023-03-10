@@ -69,7 +69,7 @@ export class UsersController {
   @ApiOkResponse({
     description: USER_SUCCESS.postJoin.text,
     schema: USER_SUCCESS_RESPONSE.postJoin,
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
     type: JoinOutput,
   })
   // ? 401 에러 케이스
@@ -93,7 +93,7 @@ export class UsersController {
     schema: USER_BODY_OBJECT.postJoin,
     type: JoinInput,
   })
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   async postJoin(@Body() joinInput: JoinInput): Promise<JoinOutput> {
     return this.usersService.postJoin(joinInput);
   }

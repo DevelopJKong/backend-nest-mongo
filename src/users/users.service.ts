@@ -125,7 +125,7 @@ export class UsersService implements IUserService {
         ok: true,
         message: {
           text: USER_SUCCESS.postJoin.text,
-          statusCode: HttpStatus.OK,
+          statusCode: HttpStatus.CREATED,
         },
       };
     } catch (error) {

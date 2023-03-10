@@ -1,26 +1,40 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { GetSeeBoardsOutput } from './dto/see-boards.dto';
 import { Board, BoardDocument } from './entities/board.entity';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { GetSeeBoardInput, GetSeeBoardOutput } from './dto/see-board.dto';
-import { CreateBoardOutput, CreateBoardInput } from './dto/write-board.dto';
+import { CreateBoardOutput, CreateBoardInput } from './dto/create-board.dto';
 import { User, UserDocument } from '../users/entities/user.entity';
 import { EditBoardInput, EditBoardOutput } from './dto/edit-board.dto';
 import { BOARD_SUCCESS } from '../common/constants/success.constants';
 import { BOARD_ERROR, COMMON_ERROR, USER_ERROR } from '../common/constants/error.constants';
 import { DeleteBoardOutput } from './dto/delete-board.dto';
 import { IBoardsService } from './interface/boards-service.interface';
+import * as mongoose from 'mongoose';
+import { Category, CategoryDocument } from './entities/category.entity';
+import { CreateCategoryInput, CreateCategoryOutput } from './dto/create-category.dto';
+import { IDocBoard } from './interface/boards-result.interface';
 
 @Injectable()
 export class BoardsService implements IBoardsService {
   constructor(
     @InjectModel(Board.name) private readonly boards: Model<BoardDocument>,
+    @InjectModel(Category.name) private readonly categories: Model<CategoryDocument>,
     @InjectModel(User.name) private readonly users: Model<UserDocument>,
+    @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async getSeeBoards(): Promise<GetSeeBoardsOutput> {
     try {
-      const boards = await this.boards.find();
+      const boards = (await this.boards.find().populate('category')).map((item: IDocBoard) => {
+        let resultBoard: Board;
+        const categoryName = item.category.categoryName;
+        if (item?._doc) {
+          delete item._doc.category;
+          resultBoard = { ...item._doc, categoryName };
+        }
+        return resultBoard;
+      });
 
       return {
         ok: true,
@@ -40,7 +54,7 @@ export class BoardsService implements IBoardsService {
   }
   async getSeeBoard({ id }: GetSeeBoardInput): Promise<GetSeeBoardOutput> {
     try {
-      const board = await this.boards.findById(id);
+      const board = await this.boards.findById(id).populate('category');
 
       if (!board) {
         return {
@@ -69,13 +83,51 @@ export class BoardsService implements IBoardsService {
       };
     }
   }
+  async postCreateCategory({ categoryName }: CreateCategoryInput): Promise<CreateCategoryOutput> {
+    try {
+      const category = await this.categories.findOne({ categoryName });
+
+      if (category) {
+        return {
+          ok: false,
+          error: new Error(BOARD_ERROR.existCategory.error),
+          message: {
+            text: BOARD_ERROR.existCategory.text,
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
+        };
+      }
+
+      await this.categories.create({
+        categoryName,
+      });
+
+      return {
+        ok: true,
+        message: {
+          text: BOARD_SUCCESS.postCreateCategory.text,
+          statusCode: HttpStatus.CREATED,
+        },
+      };
+    } catch (error) {
+      // ! extraError
+      return {
+        ok: false,
+        error: new Error(error),
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+      };
+    }
+  }
+
   async postCreateBoard(
-    { title, content, boardImgName }: CreateBoardInput,
+    { title, content, boardImgName, categoryName }: CreateBoardInput,
     userId: string,
     file: Express.Multer.File,
   ): Promise<CreateBoardOutput> {
+    const session = await this.connection.startSession();
+    session.startTransaction();
     try {
-      const user = await this.users.findById(userId);
+      const user = await this.users.findOne({ where: { userId } }, '-password');
       if (!user) {
         // ! 유저가 존재 하지 않을 경우
         return {
@@ -87,8 +139,20 @@ export class BoardsService implements IBoardsService {
           },
         };
       }
+      const category = await this.categories.findOne({ categoryName });
 
-      const newBoard = await this.boards.create({
+      if (!category) {
+        return {
+          ok: false,
+          error: new Error(BOARD_ERROR.notExistCategory.error),
+          message: {
+            text: BOARD_ERROR.notExistCategory.text,
+            statusCode: HttpStatus.BAD_REQUEST,
+          },
+        };
+      }
+
+      const createBoardValue = new this.boards({
         title,
         content,
         boardImgName,
@@ -97,7 +161,10 @@ export class BoardsService implements IBoardsService {
         views: 0,
         rating: 0,
         owner: user,
+        category,
       });
+
+      const newBoard = await createBoardValue.save({ session });
 
       if (!newBoard) {
         return {
@@ -110,8 +177,10 @@ export class BoardsService implements IBoardsService {
         };
       }
 
-      newBoard.save();
+      user.boards.push(newBoard);
+      await user.save({ session });
 
+      await session.commitTransaction();
       return {
         ok: true,
         message: {
@@ -120,12 +189,15 @@ export class BoardsService implements IBoardsService {
         },
       };
     } catch (error) {
+      await session.abortTransaction();
       // ! extraError
       return {
         ok: false,
         error: new Error(error),
         message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
       };
+    } finally {
+      session.endSession();
     }
   }
 

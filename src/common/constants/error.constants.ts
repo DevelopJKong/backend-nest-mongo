@@ -31,7 +31,14 @@ export const BOARD_ERROR = {
     error: 'notExistBoard',
     text: '존재하지 않는 게시물 입니다.',
   },
-
+  notExistCategory: {
+    error: 'notExistCategory',
+    text: '존재하지 않는 카테고리 입니다.',
+  },
+  existCategory: {
+    error: 'existCategory',
+    text: '이미 존재하는 카테고리 입니다.',
+  },
   createFailedError: {
     error: 'createFailedError',
     text: '게시물 등록하는 과정에 문제 생겼습니다. 잠시후에 다시 시도해주세요.',
