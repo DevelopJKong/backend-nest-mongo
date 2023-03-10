@@ -11,9 +11,10 @@ import { JwtModule } from './libs/jwt/jwt.module';
 import { LoggerModule } from './libs/logger/logger.module';
 import { BoardsModule } from './boards/boards.module';
 import { CommunitiesModule } from './communities/communities.module';
-import { MailModule } from './mail/mail.module';
 import { AdminModule } from './admin/admin.module';
 import { HealthModule } from './health/health.module';
+import { MailModule } from './libs/mail/mail.module';
+import { SeedModule } from './seed/seed.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -62,6 +63,7 @@ import { HealthModule } from './health/health.module';
     CommunitiesModule,
     AdminModule,
     HealthModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -73,7 +75,19 @@ export class AppModule implements NestModule {
       method: RequestMethod.ALL,
     });
     consumer.apply(JwtMiddleware).forRoutes({
+      path: '/admin/*',
+      method: RequestMethod.ALL,
+    });
+    consumer.apply(JwtMiddleware).forRoutes({
       path: '/boards/*',
+      method: RequestMethod.ALL,
+    });
+    consumer.apply(JwtMiddleware).forRoutes({
+      path: '/communities/*',
+      method: RequestMethod.ALL,
+    });
+    consumer.apply(JwtMiddleware).forRoutes({
+      path: '/seed/*',
       method: RequestMethod.ALL,
     });
   }

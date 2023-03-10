@@ -57,3 +57,9 @@ export const NOTICE_SUCCESS = {
     text: '공지사항 생성 성공',
   },
 } as const;
+
+export const SEED_SUCCESS = {
+  seedCategory: {
+    text: '카테고리 시드 생성 성공',
+  },
+};
