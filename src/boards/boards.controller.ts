@@ -19,10 +19,12 @@ import { CreateBoardOutput, CreateBoardInput } from './dto/create-board.dto';
 import { AuthUser } from 'src/libs/auth/auth-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { boardOptions } from '../common/utils/multer.options';
+import { boardOptions, CarouselOptions } from '../common/utils/multer.options';
 import { EditBoardInput, EditBoardOutput } from './dto/edit-board.dto';
 import { Role } from '../libs/auth/role.decorator';
 import { CreateCategoryInput, CreateCategoryOutput } from './dto/create-category.dto';
+import { CreateCarouselInput } from './dto/create-carousel.dto';
+import { SeeCarouselsOutput } from './dto/see-carousels.dto';
 
 @Controller('boards')
 export class BoardsController {
@@ -77,5 +79,27 @@ export class BoardsController {
   @HttpCode(HttpStatus.CREATED)
   async postCreateCategory(@Body() createCategoryInput: CreateCategoryInput): Promise<CreateCategoryOutput> {
     return this.boardsService.postCreateCategory(createCategoryInput);
+  }
+}
+
+@Controller('carousels')
+export class CarouselController {
+  constructor(private readonly boardsService: BoardsService) {}
+
+  @Get('/')
+  @HttpCode(HttpStatus.OK)
+  async getSeeCarousels(): Promise<SeeCarouselsOutput> {
+    return this.boardsService.getSeeCarousels();
+  }
+
+  @Post('/create')
+  @Role(['Admin'])
+  @UseInterceptors(FileInterceptor('image', CarouselOptions))
+  @HttpCode(HttpStatus.CREATED)
+  async postCreateCarousel(
+    @Body() createCarouselInput: CreateCarouselInput,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<CreateCategoryOutput> {
+    return this.boardsService.postCreateCarousel(createCarouselInput, file);
   }
 }

@@ -4,20 +4,34 @@ import { CreateBoardOutput, CreateBoardInput } from '../dto/create-board.dto';
 import { EditBoardInput, EditBoardOutput } from '../dto/edit-board.dto';
 import { DeleteBoardOutput } from './../dto/delete-board.dto';
 import { CreateCategoryOutput, CreateCategoryInput } from '../dto/create-category.dto';
+import { CreateCarouselOutput, CreateCarouselInput } from '../dto/create-carousel.dto';
+import { SeeCarouselsOutput } from '../dto/see-carousels.dto';
 export interface IBoardsService {
   getSeeBoards(): Promise<GetSeeBoardsOutput>;
+
   getSeeBoard(getSeeBoardInput: GetSeeBoardInput): Promise<GetSeeBoardOutput>;
+
   postCreateCategory(postCreateCategory: CreateCategoryInput): Promise<CreateCategoryOutput>;
+
   postCreateBoard(
     postCreateBoard: CreateBoardInput,
     userId: string,
     file: Express.Multer.File,
   ): Promise<CreateBoardOutput>;
+
   putEditBoard(
     editBoardInput: EditBoardInput,
     userId: string,
     boardId: string,
     file: Express.Multer.File,
   ): Promise<EditBoardOutput>;
+
   deleteBoard(userId: string, id: number): Promise<DeleteBoardOutput>;
+
+  postCreateCarousel(
+    { carouselImgName, title, link }: CreateCarouselInput,
+    file: Express.Multer.File,
+  ): Promise<CreateCarouselOutput>;
+
+  getSeeCarousels(): Promise<SeeCarouselsOutput>;
 }

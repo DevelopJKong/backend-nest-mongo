@@ -47,6 +47,12 @@ export const BOARD_SUCCESS = {
   postCreateCategory: {
     text: '카테고리 생성 성공',
   },
+  postCreateCarousel: {
+    text: '캐러셀 생성 성공',
+  },
+  getSeeCarousels: {
+    text: '캐러셀 전체 조회 성공',
+  },
 } as const;
 
 export const NOTICE_SUCCESS = {

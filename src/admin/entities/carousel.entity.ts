@@ -23,6 +23,14 @@ export class Carousel {
   @IsString()
   carouselImgPath: string;
 
+  @Prop({ required: true, type: String })
+  @IsString()
+  title: string;
+
+  @Prop({ required: true, type: String })
+  @IsString()
+  link: string;
+
   @Prop({ required: true, type: Date, default: Date.now() })
   @IsDate()
   createdAt: Date;

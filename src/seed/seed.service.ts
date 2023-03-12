@@ -1,11 +1,10 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { SeedCategoryOutput } from './dto/seed-category.dto';
-import { COMMON_ERROR } from '../../common/constants/error.constants';
 import { InjectModel } from '@nestjs/mongoose';
-import { Category } from '../../boards/entities/category.entity';
-import { CategoryDocument } from '../../../dist/boards/entities/category.entity';
 import { Model } from 'mongoose';
-import { SEED_SUCCESS } from '../../common/constants/success.constants';
+import { Category, CategoryDocument } from '../boards/entities/category.entity';
+import { SEED_SUCCESS } from '../common/constants/success.constants';
+import { COMMON_ERROR } from '../common/constants/error.constants';
 
 @Injectable()
 export class SeedService {

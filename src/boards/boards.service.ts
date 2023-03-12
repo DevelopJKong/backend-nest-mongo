@@ -15,6 +15,9 @@ import * as mongoose from 'mongoose';
 import { Category, CategoryDocument } from './entities/category.entity';
 import { CreateCategoryInput, CreateCategoryOutput } from './dto/create-category.dto';
 import { IDocBoard } from './interface/boards-result.interface';
+import { CreateCarouselInput, CreateCarouselOutput } from './dto/create-carousel.dto';
+import { Carousel, CarouselDocument } from '../admin/entities/carousel.entity';
+import { SeeCarouselsOutput } from './dto/see-carousels.dto';
 
 @Injectable()
 export class BoardsService implements IBoardsService {
@@ -22,6 +25,7 @@ export class BoardsService implements IBoardsService {
     @InjectModel(Board.name) private readonly boards: Model<BoardDocument>,
     @InjectModel(Category.name) private readonly categories: Model<CategoryDocument>,
     @InjectModel(User.name) private readonly users: Model<UserDocument>,
+    @InjectModel(Carousel.name) private readonly carousels: Model<CarouselDocument>,
     @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
   async getSeeBoards(): Promise<GetSeeBoardsOutput> {
@@ -298,6 +302,59 @@ export class BoardsService implements IBoardsService {
         },
       };
     } catch (error) {
+      return {
+        // ! extraError
+        ok: false,
+        error: new Error(error),
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+      };
+    }
+  }
+
+  async postCreateCarousel(
+    { carouselImgName, title, link }: CreateCarouselInput,
+    file: Express.Multer.File,
+  ): Promise<CreateCarouselOutput> {
+    try {
+      await this.carousels.create({
+        link,
+        title,
+        carouselImgName,
+        carouselImgPath: file.path,
+        carouselImgSize: file.size,
+      });
+
+      return {
+        ok: true,
+        message: {
+          text: BOARD_SUCCESS.postCreateCarousel.text,
+          statusCode: HttpStatus.OK,
+        },
+      };
+    } catch (error) {
+      // ! extraError
+      return {
+        ok: false,
+        error: new Error(error),
+        message: { text: COMMON_ERROR.extraError.text, statusCode: HttpStatus.INTERNAL_SERVER_ERROR },
+      };
+    }
+  }
+
+  async getSeeCarousels(): Promise<SeeCarouselsOutput> {
+    try {
+      const carousels = await this.carousels.find();
+
+      return {
+        ok: true,
+        carousels,
+        message: {
+          text: BOARD_SUCCESS.getSeeCarousels.text,
+          statusCode: HttpStatus.OK,
+        },
+      };
+    } catch (error) {
+      // ! extraError
       return {
         ok: false,
         error: new Error(error),

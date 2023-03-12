@@ -44,7 +44,7 @@ export class User {
   @IsString()
   avatar: string;
 
-  @Prop({ type: String, required: false, default: false })
+  @Prop({ type: Boolean, required: false, default: false })
   @IsBoolean()
   socialOnly: boolean;
 

@@ -78,10 +78,15 @@ export class AppModule implements NestModule {
       path: '/admin/*',
       method: RequestMethod.ALL,
     });
-    consumer.apply(JwtMiddleware).forRoutes({
-      path: '/boards/*',
-      method: RequestMethod.ALL,
-    });
+    consumer
+      .apply(JwtMiddleware)
+      .exclude(
+        { path: '/boards/carousels', method: RequestMethod.GET }, //
+      )
+      .forRoutes({
+        path: '/boards/*',
+        method: RequestMethod.ALL,
+      });
     consumer.apply(JwtMiddleware).forRoutes({
       path: '/communities/*',
       method: RequestMethod.ALL,

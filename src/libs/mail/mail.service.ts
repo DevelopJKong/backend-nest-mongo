@@ -3,8 +3,8 @@ import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common
 import * as nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import { LoggerService } from 'src/libs/logger/logger.service';
-import { CONFIG_OPTIONS } from '../common/constants/common.constants';
 import { IMailService } from './interface/mail-service.interface';
+import { CONFIG_OPTIONS } from '../../common/constants/common.constants';
 
 @Injectable()
 export class MailService implements IMailService {

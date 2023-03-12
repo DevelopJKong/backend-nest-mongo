@@ -14,13 +14,13 @@ import { IAMPORT_TOKEN_URL } from '../common/constants/common.constants';
 import { USER_SUCCESS } from '../common/constants/success.constants';
 import { COMMON_ERROR, USER_ERROR } from '../common/constants/error.constants';
 import { Verification, VerificationDocument } from './entities/verification.entity';
-import { MailService } from 'src/mail/mail.service';
 import { CertificateEmailInput } from './dto/certificate-email.dto';
 import * as mongoose from 'mongoose';
 import { Response } from 'express';
 import { FindByIdOutput } from './dto/find-by-id.dto';
 import { FindByEmailOutput } from './dto/find-by-email.dto';
 import { IUserService } from './interface/users-service.interface';
+import { MailService } from '../libs/mail/mail.service';
 @Injectable()
 export class UsersService implements IUserService {
   constructor(

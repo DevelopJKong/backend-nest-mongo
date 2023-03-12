@@ -37,3 +37,11 @@ export const NoticeOptions = {
   limits: { fileSize: 5242880 },
   fileFilter: imageFileFilter,
 };
+
+export const CarouselOptions = {
+  storage: diskStorage({
+    destination: './files/carousel',
+    filename: editFileName,
+  }),
+  limits: { fileSize: 5242880 },
+};
