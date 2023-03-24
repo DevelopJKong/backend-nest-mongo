@@ -66,7 +66,13 @@ import { SeedModule } from './seed/seed.module';
     SeedModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: 'IAppService',
+      useClass: AppService,
+    },
+  ],
+  exports: ['IAppService'],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
