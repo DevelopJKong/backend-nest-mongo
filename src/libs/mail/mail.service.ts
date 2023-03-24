@@ -2,15 +2,16 @@ import { MailModuleOptions } from './interface/mail.interface';
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
-import { LoggerService } from 'src/libs/logger/logger.service';
 import { IMailService } from './interface/mail-service.interface';
 import { CONFIG_OPTIONS } from '../../common/constants/common.constants';
+import { I_SERVICE } from '../../common/constants/interface.constants';
+import { ILoggerService } from '../logger/interfaces/logger-service.interface';
 
 @Injectable()
 export class MailService implements IMailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
-    private readonly log: LoggerService,
+    @Inject(I_SERVICE.I_LOGGER_SERVICE) private readonly log: ILoggerService,
   ) {}
 
   config(): object {

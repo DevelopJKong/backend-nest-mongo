@@ -1,17 +1,18 @@
 import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { JwtService } from './jwt.service';
 import * as bcrypt from 'bcrypt';
 import { LoggerService } from '../logger/logger.service';
 import { ForbiddenException } from '@nestjs/common/exceptions';
 import { IUsersService } from 'src/users/interface/users-service.interface';
+import { I_SERVICE } from '../../common/constants/interface.constants';
+import { IJwtService } from './interfaces/jwt-service.interface';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
   constructor(
-    @Inject('IUsersService') private readonly userService: IUsersService,
-    private readonly jwtService: JwtService,
-    private readonly log: LoggerService,
+    @Inject(I_SERVICE.I_USERS_SERVICE) private readonly userService: IUsersService,
+    @Inject(I_SERVICE.I_JWT_SERVICE) private readonly jwtService: IJwtService,
+    @Inject(I_SERVICE.I_LOGGER_SERVICE) private readonly log: LoggerService,
   ) {}
   /**
    *  * jwt middleware 미들웨어

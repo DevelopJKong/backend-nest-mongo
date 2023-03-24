@@ -5,7 +5,6 @@ import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { User, UserDocument } from './entities/user.entity';
 import { LoginInput, LoginOutput } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '../libs/jwt/jwt.service';
 import { EditProfileInput, EditProfileOutput } from './dto/edit-profile.dto';
 import { EmailCheckInput, EmailCheckOutput } from './dto/email-check.dto';
 import { CertificatePhoneInput, CertificatePhoneOutput } from './dto/certificate-phone.dto';
@@ -21,14 +20,16 @@ import { FindByIdOutput } from './dto/find-by-id.dto';
 import { FindByEmailOutput } from './dto/find-by-email.dto';
 import { IUsersService } from './interface/users-service.interface';
 import { IMailService } from 'src/libs/mail/interface/mail-service.interface';
+import { I_SERVICE } from '../common/constants/interface.constants';
+import { IJwtService } from 'src/libs/jwt/interfaces/jwt-service.interface';
 @Injectable()
 export class UsersService implements IUsersService {
   constructor(
     @InjectModel(User.name) private readonly users: Model<UserDocument>,
     @InjectModel(Verification.name) private readonly verifications: Model<VerificationDocument>,
     @InjectConnection() private readonly connection: mongoose.Connection,
-    @Inject('IMailService') private readonly mailService: IMailService,
-    private readonly jwtService: JwtService,
+    @Inject(I_SERVICE.I_MAIL_SERVICE) private readonly mailService: IMailService,
+    @Inject(I_SERVICE.I_JWT_SERVICE) private readonly jwtService: IJwtService,
   ) {}
 
   async getFindById(userId: string): Promise<FindByIdOutput> {

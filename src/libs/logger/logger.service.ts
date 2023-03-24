@@ -2,7 +2,7 @@ import { CONFIG_OPTIONS, PROD } from '../../common/constants/common.constants';
 import { Inject, Injectable } from '@nestjs/common';
 import * as winston from 'winston';
 import * as winstonDaily from 'winston-daily-rotate-file';
-import { LoggerModuleOptions } from './logger.interface';
+import { LoggerModuleOptions } from './interfaces/logger.interface';
 import * as chalk from 'chalk';
 
 @Injectable()
