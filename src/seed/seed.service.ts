@@ -5,9 +5,10 @@ import { Model } from 'mongoose';
 import { Category, CategoryDocument } from '../boards/entities/category.entity';
 import { SEED_SUCCESS } from '../common/constants/success.constants';
 import { COMMON_ERROR } from '../common/constants/error.constants';
+import { ISeedService } from './interfaces/seed-service.interface';
 
 @Injectable()
-export class SeedService {
+export class SeedService implements ISeedService {
   constructor(@InjectModel(Category.name) private readonly categories: Model<CategoryDocument>) {}
   async seedCategory(): Promise<SeedCategoryOutput> {
     try {
