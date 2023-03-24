@@ -7,6 +7,7 @@ import { Board, BoardSchema } from './entities/board.entity';
 import { BoardComment, BoardCommentSchema } from './entities/board-comment.entity';
 import { CategorySchema, Category } from './entities/category.entity';
 import { Carousel, CarouselSchema } from '../admin/entities/carousel.entity';
+import { I_SERVICE } from 'src/common/constants/interface.constants';
 
 @Module({
   imports: [
@@ -18,7 +19,13 @@ import { Carousel, CarouselSchema } from '../admin/entities/carousel.entity';
       { name: Carousel.name, schema: CarouselSchema },
     ]),
   ],
-  providers: [BoardsService],
+  providers: [
+    {
+      provide: I_SERVICE.I_BOARDS_SERVICE,
+      useClass: BoardsService,
+    },
+  ],
   controllers: [BoardsController, CarouselController],
+  exports: [I_SERVICE.I_BOARDS_SERVICE],
 })
 export class BoardsModule {}

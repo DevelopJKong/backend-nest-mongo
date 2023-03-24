@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Inject,
   Param,
   Post,
   Put,
@@ -11,7 +12,6 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { BoardsService } from './boards.service';
 import { HttpCode } from '@nestjs/common/decorators/http/http-code.decorator';
 import { GetSeeBoardsOutput } from './dto/see-boards.dto';
 import { GetSeeBoardInput } from './dto/see-board.dto';
@@ -25,10 +25,12 @@ import { Role } from '../libs/auth/role.decorator';
 import { CreateCategoryInput, CreateCategoryOutput } from './dto/create-category.dto';
 import { CreateCarouselInput } from './dto/create-carousel.dto';
 import { SeeCarouselsOutput } from './dto/see-carousels.dto';
+import { I_SERVICE } from '../common/constants/interface.constants';
+import { IBoardsService } from './interface/boards-service.interface';
 
 @Controller('boards')
 export class BoardsController {
-  constructor(private readonly boardsService: BoardsService) {}
+  constructor(@Inject(I_SERVICE.I_BOARDS_SERVICE) private readonly boardsService: IBoardsService) {}
 
   @Get('/')
   @HttpCode(HttpStatus.OK)
@@ -84,7 +86,7 @@ export class BoardsController {
 
 @Controller('carousels')
 export class CarouselController {
-  constructor(private readonly boardsService: BoardsService) {}
+  constructor(@Inject(I_SERVICE.I_BOARDS_SERVICE) private readonly boardsService: IBoardsService) {}
 
   @Get('/')
   @HttpCode(HttpStatus.OK)
