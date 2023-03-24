@@ -1,4 +1,4 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus, Inject } from '@nestjs/common';
 import { JoinOutput, JoinInput } from './dto/join.dto';
 import { Model } from 'mongoose';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
@@ -20,15 +20,15 @@ import { Response } from 'express';
 import { FindByIdOutput } from './dto/find-by-id.dto';
 import { FindByEmailOutput } from './dto/find-by-email.dto';
 import { IUsersService } from './interface/users-service.interface';
-import { MailService } from '../libs/mail/mail.service';
+import { IMailService } from 'src/libs/mail/interface/mail-service.interface';
 @Injectable()
 export class UsersService implements IUsersService {
   constructor(
     @InjectModel(User.name) private readonly users: Model<UserDocument>,
     @InjectModel(Verification.name) private readonly verifications: Model<VerificationDocument>,
     @InjectConnection() private readonly connection: mongoose.Connection,
+    @Inject('IMailService') private readonly mailService: IMailService,
     private readonly jwtService: JwtService,
-    private readonly mailService: MailService,
   ) {}
 
   async getFindById(userId: string): Promise<FindByIdOutput> {

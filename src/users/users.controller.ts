@@ -29,11 +29,12 @@ import { USER_BODY_OBJECT } from '../common/constants/swagger/user/user-body-obj
 import { USER_OPERATION } from '../common/constants/swagger/user/user-operation.constant';
 import { USER_BODY_DESCRIPTION } from '../common/constants/swagger/user/user-body-description.constant';
 import { IUsersService } from './interface/users-service.interface';
+import { I_SERVICE } from '../common/constants/interface.constants';
 
 @Controller('users')
 @ApiTags('유저-API')
 export class UsersController {
-  constructor(@Inject('IUsersService') private readonly usersService: IUsersService) {}
+  constructor(@Inject(I_SERVICE.I_USERS_SERVICE) private readonly usersService: IUsersService) {}
 
   // ! 소유자 호출 API [성공 & 실패 케이스 완료]
   @Get('/owner')

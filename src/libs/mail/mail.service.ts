@@ -13,10 +13,6 @@ export class MailService implements IMailService {
     private readonly log: LoggerService,
   ) {}
 
-  /**
-   *
-   * @returns {object}
-   */
   config(): object {
     const {
       service,

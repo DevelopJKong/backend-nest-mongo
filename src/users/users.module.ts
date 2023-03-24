@@ -4,6 +4,7 @@ import { UsersController } from './users.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './entities/user.entity';
 import { Verification, VerificationSchema } from './entities/verification.entity';
+import { I_SERVICE } from 'src/common/constants/interface.constants';
 
 @Module({
   imports: [
@@ -15,10 +16,10 @@ import { Verification, VerificationSchema } from './entities/verification.entity
   controllers: [UsersController],
   providers: [
     {
-      provide: 'IUsersService',
+      provide: I_SERVICE.I_USERS_SERVICE,
       useClass: UsersService,
     },
   ],
-  exports: ['IUsersService'],
+  exports: [I_SERVICE.I_USERS_SERVICE],
 })
 export class UsersModule {}

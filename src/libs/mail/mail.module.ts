@@ -14,9 +14,12 @@ export class MailModule {
           provide: CONFIG_OPTIONS,
           useValue: options,
         },
-        MailService,
+        {
+          provide: 'IMailService',
+          useClass: MailService,
+        },
       ],
-      exports: [MailService],
+      exports: ['IMailService'],
     };
   }
 }

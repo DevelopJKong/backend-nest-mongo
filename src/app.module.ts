@@ -15,6 +15,7 @@ import { AdminModule } from './admin/admin.module';
 import { HealthModule } from './health/health.module';
 import { MailModule } from './libs/mail/mail.module';
 import { SeedModule } from './seed/seed.module';
+import { I_SERVICE } from './common/constants/interface.constants';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -68,11 +69,11 @@ import { SeedModule } from './seed/seed.module';
   controllers: [AppController],
   providers: [
     {
-      provide: 'IAppService',
+      provide: I_SERVICE.I_APP_SERVICE,
       useClass: AppService,
     },
   ],
-  exports: ['IAppService'],
+  exports: [I_SERVICE.I_APP_SERVICE],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
