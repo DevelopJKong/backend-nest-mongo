@@ -8,7 +8,7 @@ import { EditProfileOutput, EditProfileInput } from '../dto/edit-profile.dto';
 import { EmailCheckInput, EmailCheckOutput } from '../dto/email-check.dto';
 import { CertificatePhoneOutput, CertificatePhoneInput } from '../dto/certificate-phone.dto';
 
-export interface IUserService {
+export interface IUsersService {
   getFindById: (id: string) => Promise<FindByIdOutput>;
   getFindByEmail: (email: string) => Promise<FindByEmailOutput>;
   postJoin: (createUserInput: JoinInput) => Promise<JoinOutput>;

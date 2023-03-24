@@ -1,16 +1,16 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware, Inject } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { UsersService } from 'src/users/users.service';
 import { JwtService } from './jwt.service';
 import * as bcrypt from 'bcrypt';
 import { LoggerService } from '../logger/logger.service';
 import { ForbiddenException } from '@nestjs/common/exceptions';
+import { IUsersService } from 'src/users/interface/users-service.interface';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
   constructor(
+    @Inject('IUsersService') private readonly userService: IUsersService,
     private readonly jwtService: JwtService,
-    private readonly userService: UsersService,
     private readonly log: LoggerService,
   ) {}
   /**

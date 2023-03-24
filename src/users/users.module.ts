@@ -13,7 +13,12 @@ import { Verification, VerificationSchema } from './entities/verification.entity
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
-  exports: [UsersService],
+  providers: [
+    {
+      provide: 'IUsersService',
+      useClass: UsersService,
+    },
+  ],
+  exports: ['IUsersService'],
 })
 export class UsersModule {}

@@ -1,5 +1,4 @@
-import { Controller, Post, Body, HttpStatus, Put, Get, Res, UseFilters } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Controller, Post, Body, HttpStatus, Put, Get, Res, UseFilters, Inject } from '@nestjs/common';
 import { JoinInput as JoinInput, JoinOutput as JoinOutput } from './dto/join.dto';
 import { LoginOutput, LoginInput } from './dto/login.dto';
 import { HttpCode } from '@nestjs/common/decorators/http/http-code.decorator';
@@ -29,11 +28,12 @@ import { USER_ERROR_RESPONSE } from '../common/constants/swagger/user/user-error
 import { USER_BODY_OBJECT } from '../common/constants/swagger/user/user-body-object.constant';
 import { USER_OPERATION } from '../common/constants/swagger/user/user-operation.constant';
 import { USER_BODY_DESCRIPTION } from '../common/constants/swagger/user/user-body-description.constant';
+import { IUsersService } from './interface/users-service.interface';
 
 @Controller('users')
 @ApiTags('유저-API')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(@Inject('IUsersService') private readonly usersService: IUsersService) {}
 
   // ! 소유자 호출 API [성공 & 실패 케이스 완료]
   @Get('/owner')

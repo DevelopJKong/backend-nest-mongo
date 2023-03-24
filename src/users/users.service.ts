@@ -19,10 +19,10 @@ import * as mongoose from 'mongoose';
 import { Response } from 'express';
 import { FindByIdOutput } from './dto/find-by-id.dto';
 import { FindByEmailOutput } from './dto/find-by-email.dto';
-import { IUserService } from './interface/users-service.interface';
+import { IUsersService } from './interface/users-service.interface';
 import { MailService } from '../libs/mail/mail.service';
 @Injectable()
-export class UsersService implements IUserService {
+export class UsersService implements IUsersService {
   constructor(
     @InjectModel(User.name) private readonly users: Model<UserDocument>,
     @InjectModel(Verification.name) private readonly verifications: Model<VerificationDocument>,
